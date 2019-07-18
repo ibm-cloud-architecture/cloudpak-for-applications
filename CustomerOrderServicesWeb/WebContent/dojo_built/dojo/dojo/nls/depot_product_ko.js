@@ -1,0 +1,1 @@
+dojo.provide("dojo.nls.depot_product_ko");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.ko");dijit.nls.common.ko={"buttonOk":"확인","buttonCancel":"취소","buttonSave":"저장","itemClose":"닫기"};

@@ -1,0 +1,1 @@
+dojo.provide("dojo.nls.depot_product_sk");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.sk");dijit.nls.common.sk={"buttonOk":"OK","buttonCancel":"Zrušiť","buttonSave":"Uložiť","itemClose":"Zatvoriť"};

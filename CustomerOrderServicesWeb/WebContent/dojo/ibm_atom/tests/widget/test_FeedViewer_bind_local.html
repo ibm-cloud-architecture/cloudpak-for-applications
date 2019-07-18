@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Test the Feed Viewer (using ATOM)</title>
+<style type="text/css">
+	@import "css/EntryHeader.css";
+	@import "css/HtmlFeedViewer.css";
+	@import "css/HtmlFeedViewerGrouping.css";
+	@import "css/HtmlFeedViewerEntry.css";
+	@import "css/HtmlFeedEntryViewer.css";
+</style>
+<script type="text/javascript">
+  var djConfig = {isDebug: true, parseOnLoad: true};
+</script>
+<script type="text/javascript" src="../../../dojo/dojo.js"></script>
+<script language="JavaScript" type="text/javascript">
+    dojo.require("ibm_atom.io.atom");
+    dojo.require("ibm_atom.widget.FeedViewer");
+    dojo.require("dijit.layout.ContentPane");
+    var feedViewer = null;
+    var feedPane = null;
+    var feedTitle = null;
+    var feedURI = "samplefeed.xml";
+    function init(){
+        feedViewer = dijit.byId("fv1");
+        feedPane = dijit.byId("feedPane");    
+        feedTitle = dojo.byId("feedTitle"); 
+
+        var atomIO = new ibm_atom.io.atom.AtomIO();
+        atomIO.getFeed(feedURI,dojo.hitch(feedViewer,feedViewer.setFeed));
+
+        dojo.connect(feedViewer,"onEntrySelected",function (entry){
+            feedTitle.innerHTML = entry.title.value;
+            if (entry.content){
+                feedPane.setContent(entry.content.value);
+                feedPane.setContent(entry.content.toString());
+            } else if (entry.summary){
+                feedPane.setContent(entry.summary.value);
+            }
+        });
+    }
+    dojo.addOnLoad(init);
+</script>
+</head>
+<body>
+    <div> 
+        <div dojoType="ibm_atom.widget.FeedViewer" id="fv1"></div>
+    </div>  
+    <div>  
+        <div id="feedTitle" style="font-size: large;font-weight: bold;"></div>  
+        <div dojoType="dijit.layout.ContentPane" id="feedPane"></div>
+    </div>
+</body>
+</html>

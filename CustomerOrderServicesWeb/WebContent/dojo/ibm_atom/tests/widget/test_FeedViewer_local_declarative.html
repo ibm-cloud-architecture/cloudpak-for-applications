@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Test the Feed Viewer (using ATOM)</title>
+<style type="text/css">
+	@import "css/EntryHeader.css";
+	@import "css/HtmlFeedViewer.css";
+	@import "css/HtmlFeedViewerGrouping.css";
+	@import "css/HtmlFeedViewerEntry.css";
+	@import "css/HtmlFeedEntryViewer.css";
+</style>
+<script type="text/javascript">
+  var djConfig = {isDebug: true, parseOnLoad: true};
+</script>
+<script type="text/javascript" src="../../../dojo/dojo.js"></script>
+<script language="JavaScript" type="text/javascript">
+    dojo.require("ibm_atom.io.atom");
+    dojo.require("ibm_atom.widget.FeedViewer");
+    dojo.require("ibm_atom.widget.FeedEntryViewer");
+    dojo.require("dijit.layout.ContentPane");
+    dojo.require("dijit.layout.SplitContainer");
+    
+</script>
+</head>
+<body>
+    <div> 
+        <div dojoType="ibm_atom.widget.FeedViewer" 
+             widgetId="fv1"
+             url="samplefeed.xml"
+             entrySelectionTopic="atomfeed/entry/topic">
+         </div>
+    </div>  
+    
+    <div dojoType="ibm_atom.widget.FeedEntryViewer" 
+         widgetId="feedEditor"
+         enableMenu="true"
+         enableMenuFade="true"
+         enableEdit="true"
+         displayEntrySections="title,authors,summary"
+         entrySelectionTopic="atomfeed/entry/topic">
+    </div>
+    
+</body>
+</html>
+
+
