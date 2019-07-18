@@ -26,7 +26,7 @@ The following are prerequisites for deploying the original ASIS version of this 
 
 You can clone the repository from its main GitHub repository page and checkout the appropriate branch for this version of the application.
 
-1. `git clone github.ibm.com/CASE/cloudpak-for-applications.git`  ** THIS WILL CHANGE **
+1. `git clone https://github.com/ibm-cloud-architecture/cloudpak-for-applications.git`
 2. `cd refarch-jee-customerorder`  
 3. `git checkout was855`  
 
@@ -64,7 +64,7 @@ Websphere environment configuration can be setup using the automation script or 
 
 #### Using the Configuration Script
 
-1. The configuration file (Jython script) can be accessed here [WAS_config.py](https://github.com/ibm-cloud-architecture/refarch-jee-customerorder/blob/was855/Common/WAS_Config/WAS_config.py). It resides in the 'Common' sub-directory.  ** THIS WILL CHANGE **
+1. The configuration file (Jython script) can be accessed here [WAS_config.py](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/was855/Common/WAS_Config/WAS_config.py). It resides in the 'Common' sub-directory.
 
 2. Start the WebSphere Application Server.
 
