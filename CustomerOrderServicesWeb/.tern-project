@@ -1,0 +1,22 @@
+{
+  "plugins": {
+    "guess-types": {
+      
+    },
+    "outline": {
+      
+    },
+    "browser-extension": {
+      
+    },
+    "jshint": {
+      
+    },
+    "dojotoolkit1.10": {
+      
+    }
+  },
+  "libs": [
+    "browser"
+  ]
+}

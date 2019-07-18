@@ -1,0 +1,1 @@
+({"EUR_displayName":"యురొ","GBP_displayName":"బ్రిటిష్ పౌండ్ స్టెర్లింగ్","JPY_displayName":"జపాను దేశ యెస్","CNY_displayName":"చైనా దేశ యువాన్ రెన్మిన్బి","USD_displayName":"ఐక్య రాష్ట్ర అమెరిక డాలర్","USD_symbol":"US$","CAD_symbol":"CA$","GBP_symbol":"£","HKD_symbol":"HK$","JPY_symbol":"JP¥","AUD_symbol":"AU$","CNY_symbol":"CN¥","EUR_symbol":"€"})

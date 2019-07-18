@@ -1,0 +1,7 @@
+<root>
+  <facet id="jst.jaxrs">
+    <node name="libprov">
+      <attribute name="provider-id" value="com.ibm.ast.ws.jaxrs.v7.jaxrs11.v112.library"/>
+    </node>
+  </facet>
+</root>

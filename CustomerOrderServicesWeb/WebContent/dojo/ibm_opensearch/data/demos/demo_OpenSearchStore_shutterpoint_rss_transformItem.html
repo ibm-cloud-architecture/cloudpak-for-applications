@@ -1,0 +1,183 @@
+<!--
+  This file is a demo of the OpenSearchStore, a simple wrapper to any OpenSearch compliant
+  search engine.
+-->
+<html>
+<head>
+	<title>Demo of OpenSearchStore</title>
+	<style type="text/css">
+
+		@import "../../../dijit/themes/tundra/tundra.css";
+		@import "../../../dojo/resources/dojo.css";
+		@import "../../../dijit/tests/css/dijitTests.css";
+		@import "./openSearchDemo.css";
+	</style>
+
+	<script type="text/javascript" src="../../../dojo/dojo.js" djConfig="isDebug: true, parseOnLoad: true"></script>
+	
+	<script type="text/javascript">
+		dojo.require("dojo.parser");
+		dojo.require("dijit.form.TextBox");
+		dojo.require("dijit.form.Button");
+		dojo.require("dijit.form.ComboBox");
+		dojo.require("dijit.form.NumberSpinner");
+		dojo.require("dijit.Tree");
+		dojo.require("ibm_opensearch.data.OpenSearchStore");
+
+		function init(){
+			var fViewWidgets = [];
+
+			//Set up an onComplete handler for OpenSearchData
+			function onComplete(items, request){
+				if(items.length > 0){
+					var tbody = dojo.byId("searchResults");
+					var test;
+					var tr, td;
+					for(var i=0; i<items.length; i++){
+						td = dojo.doc.createElement("td");
+						td.innerHTML = openSearchStore.getValue(items[i], "content");
+						tr = dojo.doc.createElement("tr");
+						tr.appendChild(td);
+						tbody.appendChild(tr);
+					}
+				}
+				statusWidget.attr("value", "PROCESSING COMPLETE.");
+
+			}
+			//What to do if a search fails...
+			function onError(error, request){
+				statusWidget.attr("value", "PROCESSING ERROR.");
+			}
+
+			//Function to invoke the search of the openSearchStore
+			function invokeSearch(){
+				var tbody = dojo.byId("searchResults");
+				while(tbody.childNodes.length){
+					var node = tbody.childNodes.item(0);
+					node.parentNode.removeChild(node);
+				}
+				var request = {
+					query: {},
+					onComplete: onComplete,
+					onError: onError
+				};
+				if(searchTermsWidget){
+					var searchTerms = searchTermsWidget.attr("value");
+					if(searchTerms && searchTerms !== ""){
+						var searchTermsArray = searchTerms.split(" ");
+						searchTerms = "";
+						for(var i = 0; i < searchTermsArray.length; i++){
+							searchTerms = searchTerms + searchTermsArray[i];
+							if(i < (searchTermsArray.length - 1)){
+								searchTerms += ","
+							}
+						}
+						request.query.searchTerms = searchTerms;
+					}
+				}
+
+				if(countWidget){
+					request.count = countWidget.attr("value");
+				}
+
+				if(statusWidget){
+					statusWidget.attr("value", "PROCESSING REQUEST");
+				}
+
+				openSearchStore.fetch(request);
+			}
+
+			//Lastly, link up the search event.
+			var button = dijit.byId("searchButton");
+			dojo.connect(button, "onClick", invokeSearch);
+			
+			//Override the processItem function:
+			openSearchStore.processItem = function(item, attribute){
+				var description = item.node.getElementsByTagName("description").item(0);
+				var div = dojo.doc.createElement("div");
+				div.innerHTML = description.childNodes.item(0).nodeValue;
+
+				//Of the description children, remove the divs (to only leave the images)
+				for(var i=0; i<div.childNodes.length; i++){
+					var node = div.childNodes.item(i);
+					if(node.tagName.toLowerCase() === "div")
+						node.parentNode.removeChild(node);
+				}
+
+				return openSearchStore._getNodeXml(div, true);
+			}
+		}
+		dojo.addOnLoad(init);
+	</script>
+</head>
+
+<body class="tundra">
+	<h1>
+		DEMO:  OpenSearchStore Search
+	</h1>
+	<hr>
+	<h3>
+		Description:
+	</h3>
+	<p>
+		This simple demo shows how services, such as an OpenSearch compliant search service, can be wrapped by the datastore API.  In this demo, you can search public search engines through a simple OpenSearchStore by specifying a series of search terms (separated by spaces) to search on.  The results will be displayed below the search box.
+	</p>
+	<blockquote>
+
+	<!--
+		The store instance used by this demo.
+	-->
+	<table>
+		<tbody>
+			<tr>
+				<td>
+					<b>Status:</b>
+				</td>
+				<td>
+					<div dojoType="dijit.form.TextBox" maxLength="50" id="status" jsId="statusWidget" disabled="true"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<b>Search for:</b>
+				</td>
+				<td>
+<!--					<div dojoType="dijit.form.TextBox" size="50" id="searchTerms" jsId="searchTermsWidget" value="WebSphere"></div>-->
+					<div dojoType="dijit.form.TextBox" maxLength="50" id="searchTerms" jsId="searchTermsWidget" value="flower"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<b>Number of Results:</b>
+				</td>
+				<td>
+					<div id="count"
+						 jsId="countWidget"
+						 dojoType="dijit.form.NumberSpinner"
+						 value="20"
+						 constraints="{min:1,max:20}">
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				</td>
+				<td>
+					<div dojoType="dijit.form.Button" label="Search" id="searchButton" jsId="searchButtonWidget"></div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<hr/>
+	<div dojoType="ibm_opensearch.data.OpenSearchStore"
+		 url="resources/shutterpoint_osd.xml"
+		 jsId="openSearchStore">
+	</div>
+	<table>
+		<tbody id="searchResults">
+		</tbody>
+	</table>
+	</blockquote>
+
+</body>
+</html>
