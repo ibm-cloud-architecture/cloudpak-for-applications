@@ -65,6 +65,7 @@ objects:
     source:
       git:
         uri: ${SOURCE_URL}
+        ref: ${SOURCE_REF}
     strategy:
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile
@@ -84,15 +85,15 @@ parameters:
 - description: Git source URI for application
   name: SOURCE_URL
   required: true
-  value: https://github.com/davemulley/cloudpak-for-applications
+  value: https://github.com/ibm-cloud-architecture/cloudpak-for-applications
 - description: Git branch/tag reference
   name: SOURCE_REF
-  value: master
-- description: WebSphere Docker Image Name - 
+  value: liberty
+- description: WebSphere Docker Image Name -
   name: WEBSPHERE_IMAGE
   required: true
   value: ibmcom/websphere-liberty
-- description: WebSphere Docker Image Version - 
+- description: WebSphere Docker Image Version -
   name: WEBSPHERE_VERSION
   required: true
   value: kernel-ubi-min
