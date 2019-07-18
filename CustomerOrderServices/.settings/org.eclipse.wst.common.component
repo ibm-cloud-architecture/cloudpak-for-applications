@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="CustomerOrderServices">
+        <wb-resource deploy-path="/" source-path="/ejbModule" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/" source-path="/.apt_generated"/>
+        <property name="java-output-path" value="/CustomerOrderServices/build/classes"/>
+        <property name="ClientProject" value="CustomerOrderServicesClient"/>
+        <property name="ClientJARURI" value="CustomerOrderServicesClient.jar"/>
+    </wb-module>
+</project-modules>

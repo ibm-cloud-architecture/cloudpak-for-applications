@@ -1,0 +1,1 @@
+dojo.provide("dojo.nls.depot_product_ja");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.ja");dijit.nls.common.ja={"buttonOk":"OK","buttonCancel":"キャンセル","buttonSave":"保存","itemClose":"閉じる"};

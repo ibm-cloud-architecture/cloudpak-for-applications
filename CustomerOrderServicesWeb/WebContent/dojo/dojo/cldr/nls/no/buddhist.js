@@ -1,0 +1,101 @@
+({
+	"quarters-format-abbr": [
+		"K1", 
+		"K2", 
+		"K3", 
+		"K4"
+	], 
+	"dateFormat-medium": "d. MMM y G", 
+	"dateFormatItem-MMMEd": "E d. MMM", 
+	"dateFormatItem-yMEd": "EEE d.M.yyyy", 
+	"dateFormatItem-MEd": "E d.M", 
+	"timeFormat-full": "'kl'. HH:mm:ss zzzz", 
+	"dateFormatItem-Md": "d.M.", 
+	"dateFormatItem-EEEd": "EEE d", 
+	"months-standAlone-narrow": [
+		"J", 
+		"F", 
+		"M", 
+		"A", 
+		"M", 
+		"J", 
+		"J", 
+		"A", 
+		"S", 
+		"O", 
+		"N", 
+		"D"
+	], 
+	"days-standAlone-narrow": [
+		"S", 
+		"M", 
+		"T", 
+		"O", 
+		"T", 
+		"F", 
+		"L"
+	], 
+	"dateFormatItem-yQQQ": "QQQ y", 
+	"dateFormat-long": "d. MMMM y G", 
+	"dateFormatItem-ms": "mm.ss", 
+	"dateFormat-short": "d.M yyyy", 
+	"dateFormatItem-yMMMEd": "EEE d. MMM y", 
+	"months-format-wide": [
+		"januar", 
+		"februar", 
+		"mars", 
+		"april", 
+		"mai", 
+		"juni", 
+		"juli", 
+		"august", 
+		"september", 
+		"oktober", 
+		"november", 
+		"desember"
+	], 
+	"dateFormatItem-d": "d.", 
+	"dateFormatItem-yM": "M y", 
+	"months-format-abbr": [
+		"jan.", 
+		"feb.", 
+		"mars", 
+		"apr.", 
+		"mai", 
+		"juni", 
+		"juli", 
+		"aug.", 
+		"sep.", 
+		"okt.", 
+		"nov.", 
+		"des."
+	], 
+	"days-format-wide": [
+		"søndag", 
+		"mandag", 
+		"tirsdag", 
+		"onsdag", 
+		"torsdag", 
+		"fredag", 
+		"lørdag"
+	], 
+	"dateFormatItem-yQ": "Q yyyy", 
+	"dateFormatItem-yMMM": "MMM y", 
+	"quarters-format-wide": [
+		"1. kvartal", 
+		"2. kvartal", 
+		"3. kvartal", 
+		"4. kvartal"
+	], 
+	"dateFormat-full": "EEEE d. MMMM y G", 
+	"dateFormatItem-MMMd": "d. MMM", 
+	"days-format-abbr": [
+		"søn.", 
+		"man.", 
+		"tir.", 
+		"ons.", 
+		"tor.", 
+		"fre.", 
+		"lør."
+	]
+})

@@ -1,0 +1,1 @@
+dojo.provide("dojo.nls.depot_product_it");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.it");dijit.nls.common.it={"buttonOk":"OK","buttonCancel":"Annulla","buttonSave":"Salva","itemClose":"Chiudi"};

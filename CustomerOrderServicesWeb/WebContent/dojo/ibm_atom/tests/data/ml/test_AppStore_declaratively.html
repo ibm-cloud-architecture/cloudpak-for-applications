@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>IBM Atom APP Store</title>
+<style>
+	@import "../../../../dijit/themes/tundra/tundra.css";
+	@import "../../../../dojo/resources/dojo.css";
+	@import "../../../../dijit/tests/css/dijitTests.css";
+</style>
+<script type="text/javascript">
+	djConfig = {
+		isDebug: true,
+		parseOnLoad: true
+	};
+</script>
+<script type="text/javascript" src="../../../../dojo/dojo.js"></script>
+<!--
+<script language="JavaScript" type="text/javascript">
+	dojo.require("doh.runner");
+	function registerTests() {
+		doh.register("t", 
+			[
+				function testTableLoaded(t){
+					t.assertTrue(tableStore !== null);
+					t.assertTrue(tableStore !== undefined);
+				}
+			]
+		);
+		doh.run();
+	};
+	dojo.addOnLoad(registerTests);
+</script>
+-->
+
+<script language="JavaScript" type="text/javascript">
+	dojo.require("dojo.parser");
+	dojo.require("ibm_atom.data.AppStore");
+	dojo.require("dijit.Tree");
+
+	function init() {
+		var store = appStore;
+
+		function testComplete(items, request){
+			var item = items[0];
+
+			console.debug(appStore.getLabel(item));
+			console.debug(appStore.getLabelAttributes(item));
+			console.debug(appStore.isItem(item));												// true
+			console.debug(appStore.isItemLoaded(item));											// true
+			console.debug(appStore.hasAttribute(item, "title"));								// true
+			console.debug(appStore.hasAttribute(item, "nonAttribute"));							// false
+			console.debug(appStore.containsValue(item, "title", "Test Editable Entry #1"));		// true
+			console.debug(appStore.containsValue(item, "title", "Test NOT THE RIGHT TITLE"));	// false
+
+			console.debug(appStore.getAttributes(item));				// ["link", "author", "id", "title", "updated", "summary"]
+			console.debug(appStore.getValues(item, "title"));			// ["Test Editable Entry #1"]
+			console.debug(appStore.getValues(item, "nonAttribute"));	// [ ]
+			console.debug(appStore.getValue(item, "title"));			// "Test Editable Entry #1"
+			console.debug(appStore.getValue(item, "nonAttribute"));		// undefined
+
+			console.debug(appStore.getIdentity(item));				// "http://example.com/samplefeedEdit.xml/entry/10"
+			console.debug(appStore.getIdentityAttributes(item));	// ["id"]
+
+			console.debug(appStore.getValue(item, "title"));	// "Test Editable Entry #1"
+			appStore.unsetAttribute(item, "title");	
+			console.debug(appStore.getValue(item, "title"));	// undefined
+
+			function onError(error){
+				console.debug("ERROR");
+				console.debug(error);
+			}
+
+			function onItem(item){
+				console.debug("ITEM");
+				console.debug(item);
+			}
+			
+			appStore.deleteItem(item);
+			// The following should result in onItem being called with null, per the API
+			appStore.fetchItemByIdentity({identity:"123-343-553-2222", onError: onError, onItem: onItem});
+			
+			var newItem = {id: "http://example.org/testing-new-item", title: "Testing new Item", 
+				content: "This is the content of my new test item", authors: [{name: "test name", uri: "http://example.org"}],
+				link: [{href: "http://example.com"}]};
+			appStore.newItem(newItem);
+			// The following should result in onError being called with the above new item
+			appStore.fetchItemByIdentity({identity:"http://example.org/testing-new-item", onError: onError, onItem: onItem});
+
+		}
+		store.fetch({query:{title:"Test Editable Entry #1"}, onComplete: testComplete});
+
+//		console.debug(appStore.getFeatures());
+	}
+	dojo.addOnLoad(init);
+</script>
+
+</head>
+<body class="tundra">
+	<h1>IBM Atom APP Store</h1>
+	<hr/>
+	<br/>
+	<br/>
+
+	<!-- Instantiate the AppStore and bind it to global name appStore -->
+	<div dojoType="ibm_atom.data.AppStore" url="../../widget/samplefeedEdit.xml" jsId="appStore"></div>
+
+	<br/>
+	<br/>
+	<blockquote>
+		<b>Table Rows: <br/><i>(Just to show that the tree can determine that the appStore works like a store).<br/>Should have eight branches, where the titles contained the letter 't'.</i></b>
+		<div dojoType="dijit.Tree" id="tree" store="appStore" query="{title:'*t*'}"></div>
+	</blockquote>
+</body>
+</html>

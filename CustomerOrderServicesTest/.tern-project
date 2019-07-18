@@ -1,0 +1,19 @@
+{
+  "plugins": {
+    "guess-types": {
+      
+    },
+    "outline": {
+      
+    },
+    "browser-extension": {
+      
+    },
+    "jshint": {
+      
+    }
+  },
+  "libs": [
+    "browser"
+  ]
+}

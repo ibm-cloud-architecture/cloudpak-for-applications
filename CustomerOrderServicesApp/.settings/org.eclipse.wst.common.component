@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="CustomerOrderServicesApp">
+        <wb-resource deploy-path="/" source-path="/" tag="defaultRootSource"/>
+        <dependent-module archiveName="CustomerOrderServicesTest.war" deploy-path="/" handle="module:/resource/CustomerOrderServicesTest/CustomerOrderServicesTest">
+            <dependent-object>Module_1493296623622</dependent-object>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="CustomerOrderServices.jar" deploy-path="/" handle="module:/resource/CustomerOrderServices/CustomerOrderServices">
+            <dependent-object>Module_1493296624076</dependent-object>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="CustomerOrderServicesWeb.war" deploy-path="/" handle="module:/resource/CustomerOrderServicesWeb/CustomerOrderServicesWeb">
+            <dependent-object>Module_1493296624098</dependent-object>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

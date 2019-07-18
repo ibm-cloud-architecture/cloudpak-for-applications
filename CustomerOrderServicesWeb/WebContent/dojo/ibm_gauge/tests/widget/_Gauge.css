@@ -1,0 +1,64 @@
+@CHARSET "ISO-8859-1";
+
+.ibmGaugeContent {
+    font-family: Verdana;
+    /*font-size: xx-small;*/
+	border-width: 1px;
+	border-style: solid;
+	border-color: #CCCCCC;
+}
+
+.ibmGaugeRange0 {
+	fill: #606060 ;
+	stroke: #606060 ;
+}
+
+.ibmGaugeRange12 {
+	fill: #707070 ;
+	stroke: #707070 ;
+}
+
+.ibmGaugeRange1 {
+	fill: #808080 ;
+	stroke: #808080 ;
+}
+
+.ibmGaugeRange2 {
+	fill: #909090 ;
+	stroke: #909090 ;
+}
+
+.ibmGaugeRange3 {
+	fill: #A0A0A0 ;
+	stroke: #A0A0A0 ;
+}
+
+.ibmGaugeRange4 {
+	fill: #B0B0B0 ;
+	stroke: #B0B0B0 ;
+}
+
+.ibmGaugeRange5 {
+	fill: #C0C0C0 ;
+	stroke: #C0C0C0 ;
+}
+
+.ibmGaugeRange6 {
+	fill: #D0D0D0 ;
+	stroke: #D0D0D0 ;
+}
+
+.ibmGaugeRange7 {
+	fill: #E0E0E0 ;
+	stroke: #E0E0E0 ;
+}
+
+.ibmGaugeRange8 {
+	fill: #F0F0F0 ;
+	stroke: #F0F0F0 ;
+}
+
+.testing {
+	fill: blue;
+	stroke: blue;
+}

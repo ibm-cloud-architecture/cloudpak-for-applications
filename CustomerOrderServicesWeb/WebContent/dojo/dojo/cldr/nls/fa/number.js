@@ -1,0 +1,26 @@
+// generated from ldml/main/*.xml, xpath: ldml/numbers
+({
+	'decimal':"/",
+	'decimal':"٫",
+	'group':"،",
+	'group':"٬",
+	'list':";",
+	'list':"؛",
+	'percentSign':"%",
+	'percentSign':"٪",
+	'nativeZeroDigit':"0",
+	'nativeZeroDigit':"۰",
+	'patternDigit':"#",
+	'plusSign':"+",
+	'minusSign':"−",
+	'exponential':"E",
+	'exponential':"×۱۰^",
+	'perMille':"‰",
+	'perMille':"؉",
+	'infinity':"∞",
+	'nan':"NaN",
+	'decimalFormat':"#,##0.###;'‪'-#,##0.###'‬'",
+	'scientificFormat':"#E0",
+	'percentFormat':"'‪'%#,##0'‬'",
+	'currencyFormat':"#,##0.00 ¤;'‪'-#,##0.00'‬' ¤"
+})

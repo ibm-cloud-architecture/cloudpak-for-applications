@@ -1,0 +1,1 @@
+dojo.provide("dojo.nls.depot_product_th");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.th");dijit.nls.common.th={"buttonOk":"ตกลง","buttonCancel":"ยกเลิก","buttonSave":"บันทึก","itemClose":"ปิด"};

@@ -1,0 +1,23 @@
+@CHARSET "ISO-8859-1";
+
+.ibmGaugeContent {
+    font-family: Verdana;
+    /*font-size: xx-small;*/
+	border-width: 1px;
+	border-style: solid;
+	border-color: #CCCCCC;
+}
+.ibmGaugeRange1 {
+	fill: #B0B0B0 ;
+	stroke: #B0B0B0 ;
+}
+
+.ibmGaugeRange2 {
+	fill: #C0C0C0 ;
+	stroke: #C0C0C0 ;
+}
+
+.ibmGaugeRange3 {
+	fill: #D0D0D0 ;
+	stroke: #D0D0D0 ;
+}

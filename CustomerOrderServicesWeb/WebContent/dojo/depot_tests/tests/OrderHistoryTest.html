@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <title>Order History Test</title>
+        <style>@import "../../../theme/layout.css";</style>
+        <script type="text/javascript" src="../../dojo/dojo.js" djConfig="isDebug: true, parseOnLoad: true"></script>
+        <script type="text/javascript">
+       	dojo.registerModulePath("depot","../../dojo_depot/depot");
+       	dojo.registerModulePath("orderHistory","../../orderHistory");
+        dojo.require("dojo.parser");
+        dojo.require("doh.runner");
+  		dojo.require("dijit.layout.ContentPane");
+        dojo.require("depot.OrderHistoryController");
+		var orderHistoryController = new depot.OrderHistoryController();
+        dojo.ready(function(){
+             doh.register("depot.test.OrderHistory", [
+                  function test_format(){
+                     doh.assertEqual("Current Order", orderHistoryController.formatStatus("OPEN")); 
+                     doh.assertEqual("Other", orderHistoryController.formatStatus("Other")); 
+                  },
+                  {
+                  	name:"testOnLoadOrder",
+                  	timeout:5000,
+                  	runTest:function()
+                  	{
+                  		var deferred = orderHistoryController.getOrders();
+                  		var dohDeferred = new doh.Deferred();
+
+                         deferred.addCallback(function ()
+                         {       		
+                  			doh.assertTrue(orderHistoryController.format);
+                  			doh.assertTrue(orderHistoryController.format.items);
+                  			doh.assertTrue(orderHistoryController.orderStore);
+                  			doh.assertEqual("orderId",orderHistoryController.format.id);
+                  			dohDeferred.callback(true);
+                  		});
+                  		
+                  		return dohDeferred;
+                  	}
+                  }
+             ]);
+          //Execute D.O.H. in this remote file.
+             doh.run();
+        });
+        </script>
+    </head>
+    <body class="claro">
+    <div dojoType="dijit.layout.ContentPane" id="orderHistory">
+   		<table dojoType="dojox.grid.DataGrid" store="orderHistoryController.orderStore" id="orderHistoryGrid"autoHeight="true">
+			<thead>
+				<tr>
+					<th field="orderId" width="10%">Order Id</th>
+					<th field="status"width="15%" 
+						formatter="orderHistoryController.formatStatus">Status</th>
+					<th field="total" width="10%">Total</th>
+					<th get="orderHistoryController.getLineItems" width="65%" 
+						formatter="orderHistoryController.formatLineItems">Details</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</html>
+
