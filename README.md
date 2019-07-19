@@ -121,7 +121,7 @@ The **build** phase made changes to source code and created the WebSphere Libert
 Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-build.md)
 
 ### Deploy
-The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here]((liberty-deploy.md))
+The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here](liberty-deploy.md)
 
   ![Pipeline](images/liberty-deploy/overview.jpg)
 
