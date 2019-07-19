@@ -2,7 +2,7 @@
 # Introduction
 This section covers how to deploy the application to RedHat OpenShift using an automated CI/CD pipeline. The diagram below shows the flow of the pipeline which starts when the developer checks their code in to Git and ends with the application being deployed in Production.
 
-![Flow](images/liberty-deploy/overview.jpg)
+![Flow](images/tWAS-deploy/overview.jpg)
 
 1. the developer checks their code in to `git`
 2. a `webhook` automatically triggers the Jenkins Pipeline in the RHOS cluster
