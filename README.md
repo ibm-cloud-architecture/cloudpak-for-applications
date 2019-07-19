@@ -43,7 +43,7 @@ There are several components of the overall application architecture:
 ## How the Application was Modernized
 In order to modernize the application from WebSphere ND v8.5.5 to WebSphere Liberty running on OpenShift, the application went through **analysis**, **build** and **deploy** phases.
 
-#### Analysis
+### Analysis
 [IBM Cloud Transformation Advisor](https://www.ibm.com/cloud/garage/practices/learn/ibm-transformation-advisor) was used to analyze the existing Customer Order Services application and the WebSphere ND runtime. The steps were:
 
 1. Install IBM Cloud Transformation Advisor either in to a [Kubernetes Cluster](https://developer.ibm.com/recipes/tutorials/deploying-transformation-advisor-into-ibm-cloud-private/) or [locally](https://www.ibm.com/cloud/garage/tutorials/install-ibm-transformation-advisor-local)
@@ -68,7 +68,7 @@ In order to modernize the application from WebSphere ND v8.5.5 to WebSphere Libe
 
 Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-analyze.md)
 
-#### Build
+### Build
 The **build** phase made changes to source code and created the WebSphere Liberty configuration artifacts. The steps were:
 
 1. Make the simple code changes required for the EJB lookups which were recommended by IBM Cloud Transformation Advisor. The three Java classes that should be modified to look up Enterprise JavaBeans differently are shown in the detailed analysis view of IBM Cloud Transformation Advisor:
@@ -109,7 +109,7 @@ The **build** phase made changes to source code and created the WebSphere Libert
 
 Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-build.md)
 
-#### Deploy
+### Deploy
 The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here]((liberty-deploy.md))
 
   ![Pipeline](images/liberty-deploy/overview.jpg)
