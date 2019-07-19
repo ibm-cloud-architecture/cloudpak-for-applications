@@ -1,5 +1,5 @@
 # CloudPak for Applications: Runtime Modernization Solution
-=======
+
 ## Introduction
 **Runtime modernization** moves an application to a 'built for the cloud' runtime with the least amount of effort. **WebSphere Liberty** is a fast, dynamic, and easy-to-use Java application server, built on the open source Open Liberty project. Ideal or the cloud, Liberty is a combination of IBM technology and open source software, with fast startup times (<2 seconds), no server restarts to pick up changes, and a simple XML configuration.
 
@@ -19,6 +19,12 @@ This repository holds a solution that is the result of a **runtime modernization
 
 - [Application Overview](#application-overview)
 - [How the Application was Modernized](#how-the-application-was-modernized)
+  - [Analysis](#analysis)
+  - [Build](#build)
+  - [Deploy](#deploy)
+- [Deploy the Application](#deploy-the-application)
+- [Validate the Application](#validate-the-application)
+- [Summary](#summary)
 
 ## Application Overview
 The **Customer Order Services** application is a simple store-front shopping application, built during the early days of the Web 2.0 movement. Users interact directly with a browser-based interface and manage their cart to submit orders.  This application is built using the traditional [3-Tier Architecture](http://www.tonymarston.net/php-mysql/3-tier-architecture.html) model, with an HTTP server, an application server, and a supporting database.
@@ -60,7 +66,7 @@ In order to modernize the application from WebSphere ND v8.5.5 to WebSphere Libe
 
 5. In summary, some minimal code changes are required to move this application to the WebSphere Liberty runtime and the decision was taken to proceed with these code changes.
 
-Detailed, step-by-step instruction on how to replicate these steps are provided [here](liberty-analyze.md)
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-analyze.md)
 
 #### Build
 The **build** phase made changes to source code and created the WebSphere Liberty configuration artifacts. The steps were:
@@ -101,11 +107,38 @@ The **build** phase made changes to source code and created the WebSphere Libert
 
 5. The containerized application was tested locally before the code and configuration files were committed to the **git** repository
 
-Detailed, step-by-step instruction on how to replicate these steps are provided [here](liberty-build.md)
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-build.md)
 
 #### Deploy
+The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here]((liberty-deploy.md))
 
-Detailed, step-by-step instruction on how to replicate these steps are provided [here](liberty-deploy.md)
+  ![Pipeline](images/liberty-deploy/overview.jpg)
+
+The steps were:
+
+1. Configure the RedHat OpenShift Cluster for WebSphere by creating the necessary `SecurityContextConstraints` definition. The file can be found here:
+
+- [scc.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/ssc.yaml)
+
+2. Create the RedHat OpenShift **build template** that would be used to define the RedHat OpenShift artifacts related to the build process including `ImageStream` and `BuildConfig` definitions. The file can be found here:
+
+- [template-libery-build.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-build.yaml)
+
+3. Create the RedHat OpenShift **deployment template** that would be used to define the RedHat OpenShift artifacts related to the Customer Order Services application including `DeploymentConfig`, `Service` and `Route` definitions. The file can be found here:
+
+- [template-libery-deploy.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-deploy.yaml)
+
+4. Create the Jenkins `Jenkinsfile` for the pipeline. The Jenkinsfile defines the steps that the pipeline takes to build the Customer Order Services application EAR file, create an immutable Docker Image and then move the image through the `dev`, `stage` and `prod` environments. The file can be found here:
+
+- [Jenkinsfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Jenkinsfile)
+
+5. Create the `build` project, load the **build template** and configure **Jenkins**
+
+6. Create the `dev`, `stage` and `prod` projects and load the **deployment template**
+
+7. Verify the pipeline.
+
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-deploy.md)
 
 ## Deploy the Application
 
