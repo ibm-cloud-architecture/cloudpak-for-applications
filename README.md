@@ -75,7 +75,7 @@ In order to modernize the application from WebSphere ND v8.5.5 to the WebSphere 
 
 5. In summary, no code changes are required to move this application to the traditional WebSphere Base v9 runtime and the decision was taken to proceed with the operational modernization.
 
-Detailed, step-by-step instructions on how to replicate these steps are provided [here](twas-analyze.md)
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](tWAS-analyze.md)
 
 ### Build
 The **build** phase created the traditional WebSphere container configuration artifacts. The steps were:
@@ -90,12 +90,12 @@ The **build** phase created the traditional WebSphere container configuration ar
 
 3. The containerized application was tested locally before the code and configuration files were committed to the **git** repository
 
-Detailed, step-by-step instructions on how to replicate these steps are provided [here](twas-build.md)
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](tWAS-build.md)
 
 ### Deploy
-The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here]((twas-deploy.md))
+The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here]((tWAS-deploy.md))
 
-  ![Pipeline](images/twas-deploy/overview.jpg)
+  ![Pipeline](images/tWAS-deploy/overview.jpg)
 
 The steps were:
 
@@ -113,7 +113,7 @@ The steps were:
 
 4. Create the Jenkins `Jenkinsfile` for the pipeline. The Jenkinsfile defines the steps that the pipeline takes to build the Customer Order Services application EAR file, create an immutable Docker Image and then move the image through the `dev`, `stage` and `prod` environments. The file can be found here:
 
-- [Jenkinsfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/lwas90/Jenkinsfile)
+- [Jenkinsfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/was90/Jenkinsfile)
 
 5. Create the `build` project, load the **build template** and configure **Jenkins**
 
@@ -121,7 +121,7 @@ The steps were:
 
 7. Verify the pipeline.
 
-Detailed, step-by-step instructions on how to replicate these steps are provided [here](twas-deploy.md)
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](tWAS-deploy.md)
 
 ## Deploy the Application
 The following steps will deploy the modernized Customer Order Services application in a traditional WebSphere container to a RedHat OpenShift cluster.
