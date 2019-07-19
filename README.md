@@ -1,4 +1,4 @@
-#CloudPak for Applications Solutions
+# CloudPak for Applications Solutions
 
 This repository holds the following solutions for the CloudPak for Applications IBM Garage Architecture:
 
