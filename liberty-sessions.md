@@ -1,7 +1,6 @@
 # Session state management considerations
 
-One of the 12 Factor principles is that apps and services should be stateless. 
-Many existing monolith applications are heavily relying on HTTP sessions. When you are modernizing your application it is a good practice to rearchitect them to be stateless, but but some times it is not an easy task and you need to postpone it for a while.
+One of the [12 factor](https://12factor.net/) principles is that applications and services should be stateless. Many existing monolith applications rely heavily on HTTP sessions. When you are modernizing your application it is a good practice to rearchitect them to be stateless, but some times it is not an easy task and you need to postpone it for a while.
 
 There are following methods that you can use in container world to handle session state, depending on your requirements:
 - session affinity
@@ -11,145 +10,49 @@ There are following methods that you can use in container world to handle sessio
 
 ## Session affinity
 
-Session affinity is the simplest mechanism for maintaining session state. Using this mechanism, requests from the same session will be routed to the same POD. Selecting this solution, you have to be aware that PODs are not like on-premise servers, they may be restarted much often, in many circumstances.
-So this solution might be applicable to applications that need relatively short lived sessions, and can tolerate loosing session data.
+Session affinity is the simplest mechanism for maintaining session state. Using this mechanism, requests from the same session will be routed to the same POD. Selecting this solution, you have to be aware that PODs are not like on-premise servers, they may be restarted much often, in many circumstances. So this solution might be applicable to applications that need relatively short lived sessions, and can tolerate loosing session data.
 
 ### Deploying with session affinity
 
-Session affinity is ustilizing Ingress configuration. You dont have to make any changes in your application code or during building application container, all is done on deployment time.
+Session affinity on OpenShift utilizes Route configuration. You don't have to make any changes in your application code or during building application container, all is done on deployment time.
 
-It is assumed that you already have Docker image uploaded in ICP registry, if not please check *TBD_POINT FILE thatshows how TBD_TO UPLOAD IMAGE*.
-You can setup Ingress during application deploymet either via Catalog or using helm.
+In this example, a simple application has been deployed to WebSphere Liberty that displays the contents of the *session* and allows updates to be made to a *counter* that is stored in the session as well as displaying the name of the *pod* that services the request. There are multiple instances of the application pod running:
 
-#### Deploying via Catalog
-Go to the Catalog page, and select Liberty chart (either ibm-open-liberty or ibm-websphere-liberty) and click **Configure**.
+```
+oc get pods | grep sample
+session-sample-1-bzpd7   1/1     Running   0          10d
+session-sample-1-dnpsg   1/1     Running   0          10d
+session-sample-1-g5c8k   1/1     Running   0          21d
+```
 
-Specify `Helm release name` and `Target namespace`
-![release-name](images/sessions-run/catalog-name.jpg)
+On the first request, the output is as shown below with the name of the pod an empty session. Since this is first request, currently there is no data in the session. You can also see name of the pod that runs the application.
 
-Scroll down and expand *All parameters*. Type name of your image from `Liberty image repository` e.g. `mycluster.icp:8500/default/session-sampple` and `Image tag`
-![image-name](images/sessions-run/catalog-image.jpg)
+![app1](images/sessions-run/oc-app1.jpg)
 
-Chcek and correct HTTP ports if needed:
-![ports](images/sessions-run/catalog-ports.jpg)
+After a few requests to the app, using the link or reloading the page, the the counter value that is taken from the session increases as shwon below. Note that the requests are routed to the same pod. Session affinity is working.
 
-Disable SSL setting, if ports are http.
+![app2](images/sessions-run/oc-app2.jpg)
 
-Configure Ingress. **Important - you have to define host name** otherwise affinity will not work. If you dont have that host configured in your DNS, you can use `.nip.io` domain as in our example `http://sessionaffinity.172.16.52.246.nip.io`. 
-When using [nip.io](http://nip.io), you can set host to `<sub_domain>.<IP>.nip.io` where `<IP>` would be replaced with the IP address of your cluster’s Ingress controller. 
-You can also provide Rewrite target and Path if needed.
-![ingress](images/sessions-run/catalog-ingress.jpg)
+If the pod is then deleted it will be replaced by OpenShift:
 
-For the rest settings accept defaults, scroll down and click **Install** button.
+```
+oc delete pod session-sample-1-g5c8k
+pod "session-sample-1-g5c8k" deleted
 
-You can check your deployment status on the Deployments page
-![deployments](images/sessions-run/deployment.jpg)
+oc get pods | grep sample
+session-sample-1-5hzd5   1/1     Running   0          3m
+session-sample-1-7w8gh   1/1     Running   0          23s
+session-sample-1-dnpsg   1/1     Running   0          10d
+```
 
-For now, we have only one pod, so it would be hard to validate if session affinity is working correctly. Lets scale up, to have more pods. Use `Scale` option on your deployment
+If an attempt is then made to refresh the browser page or increment the count then the request is routed to the different pod and session state is lost:
 
-![scale](images/sessions-run/scale.jpg)
-
-Now we can see that more pods are running and also check details about the pods.
-
-
-![deployments2](images/sessions-run/deployment2.jpg)
-![pods](images/sessions-run/pods.jpg)
-
-Lets check the running application, the Ingress we configured, is using `sessionaffinity.172.16.52.246.nip.io` host, where 172.16.52.246 is IP of the proxy node.
-To access application type `http://sessionaffinity.172.16.52.246.nip.io/SessionSample/SessionServlet` in the browser. Since this is first request, currenty there is no data in the session. You can also see name of the pod that runs the application.
-
-
-![app1](images/sessions-run/app1.jpg)
-
-Make few requests to the app, using the link or reloading the page. You can see the counter value that is taken from the session is increasing, you can also see that requests are routed to the same pod. Session affinity is working.
-
-
-![app2](images/sessions-run/app2.jpg)
-
-Go back to the pods page and remove the pod that currently hosts the session
-
-![app4](images/sessions-run/app4_remove.jpg)
-
-Reload application page. As you can see the request was routed to the differnet pod and session state was lost.
-
-![app5](images/sessions-run/app5.jpg)
+![app4](images/sessions-run/oc-app3.jpg)
 
 If you want to ensure that session state is not lost when pod is removed, you will need to configure session caching or session persistence.
 
-#### Deploying via helm
-
-You can either provide all requirement parameters via command line, or in `values.yaml` file. values file is recommended as it is more repeatable and less error prone.
-You need to override default values for repository, tag, ports, ssl, and ingress configuration. Final file is available here [values-aff.yaml](artifacts/sessions-run/values-aff.yaml).
-
-As prerequisite you need to:
-- install ICP cli, kubectl cli, helm cli tools
-- configure helm
-
-Once all is done validate helm config issuing:
-`helm version --tls`
-You should get something similar to:
-```
-Client: &version.Version{SemVer:"v2.9.1", GitCommit:"20adb27c7c5868466912eebdf6664e7390ebe710", GitTreeState:"clean"}
-Server: &version.Version{SemVer:"v2.9.1+icp", GitCommit:"8ddf4db6a545dc609539ad8171400f6869c61d8d", GitTreeState:"clean"}
-```
-
-Configure local helm repo issuing:
-
-`helm repo add ibm-charts https://raw.githubusercontent.com/IBM/charts/master/repo/stable/`
-
-Deploy application using:
-
-`helm install -f values-aff.yaml --name gas-session-affinity-helm ibm-charts/ibm-open-liberty --tls`
-
-If deployment is successful you can check it via console and access the application.
-
-
-### Configure affinity in OpenShift
-Session affinity in OpenShift works similar way like in ICP, and seteps are similar. Just instead of `Ingress` object you create have to create `Route`.
-
-To deploy application you will use commandline tool `oc`, but it is also possible to deploy application using OpenShift web console. [Download](https://www.okd.io/download.html) and install `oc` tool. 
-
-Follow these steps to deploy application with session affinity:
-
-Login to OpenShift. OpenShit is using tokens as passwords, you can get token from the web admin console.
-
-`oc login https://ocp-prod.ibm-gse.jkwong.xyz:443 --token=yourToken`
-
-Create new project where application will be deployed, if it does not exist yet.
-
-`oc new-project appmod-session-affinity-guide`
-
-Tag and upload your application Docker image to OpenShift registry. It is assumed that you already have Docker image created, with your application.
-Login to OpenShift registry:
-
-`docker login registry.app-ocp-prod.ibm-gse.jkwong.xyz:443`
-
-accept defalult username (openshift) and provide your token as password.
-
-Tag your existing image with registry address and project namespace:
-
-`docker tag session-sample:affinity registry.app-ocp-prod.ibm-gse.jkwong.xyz:443/appmod-session-affinity-guide/session-sample:affinity`
-
-Push image to registry
-
-`docker push registry.app-ocp-prod.ibm-gse.jkwong.xyz:443/appmod-session-affinity-guide/session-sample:affinity`
-
-Create yaml file that will deploy application, service and route or use `oc` tool commands.
-
-`oc new-app -i appmod-session-affinity-guide/session-sample:affinity --name=session-affinity`
-
-Expose the app to the users:
-
-`oc expose svc/session-affinity`
-
-Application will be available under:
-
-`http://session-affinity-appmod-session-affinity-guide.app-ocp-prod.ibm-gse.jkwong.xyz/SessionSample/SessionServlet`
-
-
-
 ## Session replication using caching mechanisms
-Very often session affinity is not enough for application requirements and you need session state to be preserved in case of pod failure. One of the mechanisms that could be used is session caching.  Liberty has feature called `sessionCache-1.0` which provides distributed in-memory HttpSession caching. The `sessionCache-1.0` feature builds on top of an existing technology called [JCache (JSR 107)](https://www.jcp.org/en/jsr/detail?id=107), which offers a standardized distributed in-memory caching API. 
+Very often session affinity is not enough for application requirements and you need session state to be preserved in case of pod failure. One of the mechanisms that could be used is *session caching*. WebSphere Liberty has a `sessionCache-1.0` feature which provides distributed in-memory HttpSession caching. The `sessionCache-1.0` feature builds on top of an existing technology called [JCache (JSR 107)](https://www.jcp.org/en/jsr/detail?id=107), which offers a standardized distributed in-memory caching API.
 
 The `sessionCache-1.0` feature does not include a JCache implementation, so you need to pick one and reference it as a `<library>` in your `server.xml`. WebSphere/Open Liberty supports the following JCache implementations:
 - Hazelcast
@@ -159,6 +62,7 @@ The `sessionCache-1.0` feature does not include a JCache implementation, so you 
 
 ### Prepare DockerFile with caching configuration
 This article shows how to enable [Hazelcast In-Memory Data Grid](https://hazelcast.org/), as it is easily available in many private cloud solutions.
+
 Enabling Hazelcast session caching retrieves the Hazelcast client libraries from the [hazelcast/hazelcast](https://hub.docker.com/r/hazelcast/hazelcast/) Docker image, configures Hazelcast by copying a sample hazelcast.xml, and configures the Liberty server feature sessionCache-1.0 by including the XML snippet hazelcast-sessioncache.xml. By default, the Hazelcast Discovery Plugin for Kubernetes will auto-discover its peers within the same Kubernetes namespace. To enable this functionality, the Docker image author can include the following Dockerfile snippet, and choose from either client-server or embedded topology.
 
 Modify your current Dockerfile with the following lines:
@@ -182,54 +86,13 @@ ARG HZ_SESSION_CACHE=client
 RUN configure.sh
 ```
 
-Build the modified image and push to ICP registry. For more detailed commands refer to **LINK_TO_DEPLOY**
-
-### Deploy Hazelcast in ICP
-
-You need to deploy Hazelcast cluster to your namespece where the application containers will be deployed. You can do that from Catalog or using helm.
-
-Configure local helm repo issuing (if not already configured):
-
-`helm repo add ibm-charts https://raw.githubusercontent.com/IBM/charts/master/repo/stable/`
-
-Invoke following command:
-
-`helm install --name gas-hazel-imdg ibm-charts/ibm-hazelcast-dev --tls --set replicaCount=2`
-
-The `replicaCount` setting configures number of pods for your Hazelcast cluster. For failover you shoud have at least 2.
-You can verify deployed chart via console or command line.
-
-```
-$kubectl get pods | grep haze
-gas-hazel-imdg-hazelcast-imdg-0                                1/1     Running     0          5m14s
-gas-hazel-imdg-hazelcast-imdg-1                                1/1     Running     0          4m38s
-```
-
-#### Deploy and test application with session caching
-
-Once you have Hazelcast cluster deployed, you can install your application. Application itself is deployed exactly the same way as in section describing session affinity. Please follow thoses steps with small changes:
-- point to new image, it may differ by name or tag
-- provide differnet host in the Ingress configuration, for this testing `sessionhazel.172.16.52.246.nip.io` was used.
-
-To test the application and session replication, open the browser and make several requests to it. Notice current pod that is handling requests.
-
-![hazel-app1](images/sessions-run/hazel-app1.jpg)
-
-Now kill the pod that handle requests.
-And refresh the browser. As you can see request is served by different pod, but session state was maintained.
-
-![hazel-app2](images/sessions-run/hazel-app2.jpg)
-
-You can make additional resiliency test, for example, killing one of the Hazelcast cluster pods and verifing that session state is still correctly maintained.
-
-
 ### Deploy Hazelcast in OpenShift
-Hazelcast can be used also in OpenShift. By default it requires paid version - Hazelcast Enterprise. But you can use also free version [Hazelcast OpenShift Origin](https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/openshift/hazelcast-cluster/hazelcast-openshift-origin). See details on this page [Hazelcast for OpenShift](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift)
+Hazelcast can be used in OpenShift. By default it requires paid version - Hazelcast Enterprise. But you can use also free version [Hazelcast OpenShift Origin](https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/openshift/hazelcast-cluster/hazelcast-openshift-origin). See details on this page [Hazelcast for OpenShift](https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/openshift)
 
 For this article you will use Hazelcast OpenShift Origin.
 
 #### Deploy Hazelcast cluster
-Easiest way to deploy Hazelcast is to use following file [hazelcast.yaml](https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/openshift/hazelcast-cluster/hazelcast-openshift-origin/hazelcast.yaml)
+Easiest way to deploy Hazelcast is to use [hazelcast.yaml](https://github.com/hazelcast/hazelcast-code-samples/blob/master/hazelcast-integration/openshift/hazelcast-cluster/hazelcast-openshift-origin/hazelcast.yaml) file provided by Hazelcast
 
 Create project for Hazelcast cluster
 
@@ -257,7 +120,6 @@ statefulset.apps/hazelcast   3         3         1m
 
 This cluster contains 3 replicas, look in one of the pods logs to check if all members are correctly detected. Look for similar messages:
 
-
 ```
 $ oc get pods
 
@@ -269,17 +131,17 @@ Members {size:3, ver:7} [
 ```
 
 #### Deploy OpenLiberty configured for Hazelcast
-Hazelcast client configured with OpenLiberty is using Kubernetes API to find Hazelcast cluster. 
+The Hazelcast client configured with OpenLiberty is using Kubernetes API to find Hazelcast cluster and requires a new ServiceAccount and ClusterRoleBinding
 
-Create project for the client application
+Create project for the client application:
 
 `$ oc new-project appmod-hazelcast-liberty`
 
-Using Kubernetes API requires granting certain permissions. You may need to create new service account if you dont want to change privilidges for the default.
+Create a new ServiceAccount:
 
-`$ oc create serviceaccount hazelcast-liberty -n appmod-hazelcast-liberty` 
+`$ oc create serviceaccount hazelcast-liberty -n appmod-hazelcast-liberty`
 
-Create rbac.yaml with the following content
+Create rbac.yaml with the following content:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -297,7 +159,7 @@ subjects:
 
 ```
 
-Then, apply `rbac.yaml`.
+Then, apply `rbac.yaml`:
 
 ```bash
 $ kubectl apply -f rbac.yaml
@@ -305,125 +167,55 @@ $ kubectl apply -f rbac.yaml
 
 *Note*: You can be even more strict with the permissions and create your own Role. For details, please check the implementation of [Hazelcast Helm Chart](https://github.com/helm/charts/tree/master/stable/hazelcast).
 
-You need to change service account that will run the container, so generate the yaml file that could be used for further customization and deployment. The `KUBERNETES_NAMESPACE` environment variable requied by Hazelcast Kubernetes plugin is already included in the command
+The following changes are required to a WebSphere Liberty deployment on OpenShift in order to use Hazelcast:
 
-`$ oc new-app -i session-sample:hazel -e KUBERNETES_NAMESPACE=appmod-hazelcast -o yaml > session-hazel-deploy.yaml`
-
-The output will be similar to
-
-```
-apiVersion: v1
-items:
-- apiVersion: apps.openshift.io/v1
-  kind: DeploymentConfig
-  metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
-    labels:
-      app: session-sample
-    name: session-sample
-  spec:
-    replicas: 1
-    selector:
-      app: session-sample
-      deploymentconfig: session-sample
-    strategy:
-      resources: {}
-    template:
-      metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
-        labels:
-          app: session-sample
-          deploymentconfig: session-sample
-      spec:
-        containers:
-        - env:
-          - name: KUBERNETES_NAMESPACE
-            value: appmod-hazelcast
-          image: docker-registry.default.svc:5000/appmod-hazelcast-liberty/session-sample:hazel
-          name: session-sample
-          ports:
-          - containerPort: 9443
-            protocol: TCP
-          - containerPort: 9080
-            protocol: TCP
-          resources: {}
-    test: false
-    triggers:
-    - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - session-sample
-        from:
-          kind: ImageStreamTag
-          name: session-sample:hazel
-          namespace: appmod-hazelcast-liberty
-      type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
-    labels:
-      app: session-sample
-    name: session-sample
-  spec:
-    ports:
-    - name: 9080-tcp
-      port: 9080
-      protocol: TCP
-      targetPort: 9080
-    - name: 9443-tcp
-      port: 9443
-      protocol: TCP
-      targetPort: 9443
-    selector:
-      app: session-sample
-      deploymentconfig: session-sample
-  status:
-    loadBalancer: {}
-kind: List
-metadata: {}
+- an environment variable: `KUBERNETES_NAMESPACE` that is set to the namespace that Hazelcast is deployed in to
+- the deployment much be updated to use the new serviceAccount by adding  the following to the `template/spec` section:
 
 ```
-
-Modify it with service account and security details. Add the following to the `template/spec` section:
-
-```
-     serviceAccountName: hazelcast-liberty
-     serviceAccount: hazelcast-liberty
+serviceAccountName: hazelcast-liberty
+serviceAccount: hazelcast-liberty
 ```
 
-Deploy application:
+In order to validate that the in-memory session cache is working a similar test to the session affinity test is executed. There are two pods running the application:
 
-```bash
-$ oc create -f session-hazel-deploy.yaml
+```
+oc get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+session-hazel3-2-425tr   1/1     Running   0          9d
+session-hazel3-2-p5gtd   1/1     Running   0          9d
 ```
 
-Expose service:
-```bash
-$ oc expose service/session-sample
+On the first request shown below, the session is empty and the pod is `session-hazel3-2-425tr`
+
+![app1](images/sessions-run/hazel-oc-app1.jpg)
+
+After a few requests to the app, the same pod is being used and the session is being retained
+
+![app2](images/sessions-run/hazel-oc-app2.jpg)
+
+If the pod is then deleted it will be replaced by OpenShift:
+
+```
+oc delete pod session-hazel3-2-425tr
+pod "session-hazel3-2-425tr" deleted
+
+oc get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+session-hazel3-2-p5gtd   1/1     Running   0          9d
+session-hazel3-2-wc4wd   1/1     Running   0          18s
 ```
 
+If an attempt is then made to refresh the browser page or increment the count then the request is routed to the different pod (`session-hazel3-2--wc4wd`) but the session state is retained:
 
-## Session persistnece using database
+![app4](images/sessions-run/hazel-oc-app3.jpg)
 
-In some cases you may want to use database instead of cache for storing session data, especailly if you earlier already were using database as session persistent layer.
 
-Liberty fully supports session persistence using data base using `sessionDatabase-1.0` feature.
-You will utilize dynamic configuration support in Liberty to configure session persistence without modifying your original server configuration.
+## Session persistence using database
+
+In some cases you may want to use database instead of cache for storing session data, especially if you earlier already were using database as session persistent layer.
+
+WebSphere Liberty fully supports session persistence using data base using `sessionDatabase-1.0` feature. You will utilize dynamic configuration support in Liberty to configure session persistence without modifying your original server configuration.
 
 ### Liberty configuration
 
@@ -452,11 +244,11 @@ Create new configuration file `session-db.xml` with the following contents. It c
 
 ```
 
-In the configuration you are utilizing environment variables for database access parameters such as host, port, userid, etc (e.g. `${env.DB2_HOST}`). These variables will be provided during the deploment.
+In the configuration you are utilizing environment variables for database access parameters such as host, port, userid, etc (e.g. `${env.DB2_HOST}`). These variables will be provided during the deployment.
 
-### Modifying Dockerfile
+### Modifying the Dockerfile
 
-As now solution requires additional configuration file and database driver to access session database, that needs to be added to the dockerfile.
+As now solution requires additional configuration file and database driver to access session database, that needs to be added to the Dockerfile.
 
 ```
 # session persistence
@@ -464,96 +256,12 @@ COPY --chown=1001:0 db2drivers/ /config/resources/db2
 COPY --chown=1001:0 src/main/liberty/config/session-db.xml /config/configDropins/overrides/
 ```
 
-Then build and push your docker image as usuall.
-Once your image is built you can deploy it to the container platform.
-
 ### Deploying to OpenShift
+The only changes required to an existing WebSphere Liberty deployment are to add the Environment Variables for the DB2 database that is being used as the session database:
 
-Prepare script that will deploy application and set the required environment propertes `app-deploy.yaml`:
+- Environment Variables: `DB2_HOST`, `DB2_PORT`, `DB2_DBNAME`, `DB2_USER` and `DB2_PASSWORD` should be added to the deployment.
 
-```yaml
-apiVersion: v1
-items:
-- apiVersion: apps.openshift.io/v1
-  kind: DeploymentConfig
-  metadata:
-    labels:
-      app: session-jdbc
-    name: session-jdbc
-  spec:
-    replicas: 1
-    selector:
-      app: session-jdbc
-      deploymentconfig: session-jdbc
-    strategy:
-      resources: {}
-    template:
-      metadata:
-        labels:
-          app: session-jdbc
-          deploymentconfig: session-jdbc
-      spec:
-        containers:
-        - env:
-            - name: DB2_HOST
-              value: db2.db2.svc
-            - name: DB2_PORT
-              value: '50000'
-            - name: DB2_DBNAME
-              value: INDB
-            - name: DB2_USER
-              value: db2inst1
-            - name: DB2_PASSWORD
-              value: db2inst1
-          image: docker-registry.default.svc:5000/appmod-session-jdbc/session-sample:jdbc
-          name: session-sample
-          ports:
-          - containerPort: 9443
-            protocol: TCP
-          - containerPort: 9080
-            protocol: TCP
-          resources: {}
-    test: false
-    triggers:
-    - type: ConfigChange
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      app: session-jdbc
-    name: session-jdbc
-  spec:
-    ports:
-    - name: 9080-tcp
-      port: 9080
-      protocol: TCP
-      targetPort: 9080
-    - name: 9443-tcp
-      port: 9443
-      protocol: TCP
-      targetPort: 9443
-    selector:
-      app: session-jdbc
-      deploymentconfig: session-jdbc
-  status:
-    loadBalancer: {}
-kind: List
-metadata: {}
-```
+The same test that has been used for *session affinity* and *in-memory session cache* can be used to validate *session persistence using a database*.
 
-Deploy application:
-
-```bash
-$ oc create -f app-deploy.yaml
-```
-
-Expose service:
-```bash
-$ oc expose service/session-jdbc
-```
-
-### Deploying to ICP
-TBD
-
-
-
+## Summary
+In this article we have demonstrated how to use session affinity, session caching using an in-memory cache and session persistence using a database with WebSphere Liberty on OpenShift.
