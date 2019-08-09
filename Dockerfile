@@ -10,3 +10,7 @@ RUN springBootUtility thin \
 FROM openliberty/open-liberty:springBoot2-ubi-min
 COPY --from=staging /staging/lib.index.cache /lib.index.cache
 COPY --from=staging /staging/thinClinic.jar /config/dropins/spring/thinClinic.jar
+
+RUN chown -R 1001.0 /config && chmod -R g+rw /config
+
+USER 1001
