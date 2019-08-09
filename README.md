@@ -301,15 +301,15 @@ Now that the pipeline is complete, validate the Pet Clinic application is deploy
 
 2. Information about the deployment will be displayed including the **image** that is being used (note the **tag** on the image as it will be the same in the `stage` and `prod` deployments). After a few minutes the container will be marked as **ready**
 
-  ![Pods](images/liberty-deploy/pods.jpg)
+  ![Pods](images/pod.jpg)
 
 3. Click **Applications --> Routes** and click on the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `petclinic-liberty-dev`
 
-  ![Route](images/liberty-deploy/route.jpg)
+  ![Route](images/route.jpg)
 
-4. Add `/CustomerOrderServicesWeb` to the end of the URL in the browser to access the application
+4. The application home page will be displayed. Click **Find Owners** and then **Find Owner** to view a list of owners from the database.
 
-  ![Dev Running](images/liberty-deploy/dev-running.jpg)
+  ![Dev Running](images/running.jpg)
 
 5. Repeat the validations for the `stage` and `prod` Projects.
 

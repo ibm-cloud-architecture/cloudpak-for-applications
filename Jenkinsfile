@@ -35,7 +35,7 @@ pipeline {
         env
         mvn -v
         cd spring-petclinic
-        mvn clean package
+        mvn clean install
         """
       }
     }
