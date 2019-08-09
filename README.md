@@ -57,34 +57,41 @@ Pet Clinic was modernized by the open source community in 2013 from Spring Frame
 ### Build
 The **build** phase created the Dockerfile for the application. The steps were:
 
-1. The `Dockerfile` required to build the **immutable Docker Image** containing the application and WebSphere Liberty was created from the template provided by IBM Cloud Transformation Advisor. The final file can be found here:
+1. The `Dockerfile` required to build the **immutable Docker Image** containing the application and WebSphere Liberty was created using the `openliberty/open-liberty:springBoot2-ubi-min` image.
 
-- [Dockerfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Dockerfile)
+  ```
+  FROM openliberty/open-liberty:springBoot2-ubi-min
+  COPY --chown=1001:0 spring-petclinic/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /config/dropins/spring/
+  ```
+
+  The final file can be found here:
+
+  - [Dockerfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Dockerfile)
 
 2. The containerized application was tested locally before the code and configuration files were committed to the **git** repository
 
-Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-build.md)
+Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-build.md) XXXXXXXX
 
 ### Deploy
-The **deploy** phase created the Jenkins, Kubernetes and RedHat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different RedHat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here](liberty-deploy.md)
+The **deploy** phase created the Jenkins, Kubernetes and Red Hat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different Red Hat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here](liberty-deploy.md)
 
   ![Pipeline](images/liberty-deploy/overview.jpg)
 
 The steps were:
 
-1. Configure the RedHat OpenShift Cluster for WebSphere by creating the necessary `SecurityContextConstraints` definition. The file can be found here:
+1. Configure the Red Hat OpenShift Cluster for WebSphere by creating the necessary `SecurityContextConstraints` definition. The file can be found here:
 
 - [scc.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/ssc.yaml)
 
-2. Create the RedHat OpenShift **build template** that would be used to define the RedHat OpenShift artifacts related to the build process including `ImageStream` and `BuildConfig` definitions. The file can be found here:
+2. Create the Red Hat OpenShift **build template** that would be used to define the Red Hat OpenShift artifacts related to the build process including `ImageStream` and `BuildConfig` definitions. The file can be found here:
 
 - [template-libery-build.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-build.yaml)
 
-3. Create the RedHat OpenShift **deployment template** that would be used to define the RedHat OpenShift artifacts related to the Customer Order Services application including `DeploymentConfig`, `Service` and `Route` definitions. The file can be found here:
+3. Create the Red Hat OpenShift **deployment template** that would be used to define the Red Hat OpenShift artifacts related to the Pet Clinic application including `DeploymentConfig`, `Service` and `Route` definitions. The file can be found here:
 
 - [template-libery-deploy.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-deploy.yaml)
 
-4. Create the Jenkins `Jenkinsfile` for the pipeline. The Jenkinsfile defines the steps that the pipeline takes to build the Customer Order Services application EAR file, create an immutable Docker Image and then move the image through the `dev`, `stage` and `prod` environments. The file can be found here:
+4. Create the Jenkins `Jenkinsfile` for the pipeline. The Jenkinsfile defines the steps that the pipeline takes to build the Pet Clinic application, create an immutable Docker Image and then move the image through the `dev`, `stage` and `prod` environments. The file can be found here:
 
 - [Jenkinsfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Jenkinsfile)
 
@@ -97,13 +104,13 @@ The steps were:
 Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-deploy.md)
 
 ## Deploy the Application
-The following steps will deploy the modernized Customer Order Services application in a WebSphere Liberty container to a RedHat OpenShift cluster.
+The following steps will deploy the modernized Pet Clinic application in a WebSphere Liberty container to a Red Hat OpenShift cluster.
 
 ### Prerequisites
 You will need the following:
 
 - [Git CLI](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- RedHat OpenShift 3.11 with Cluster Admin permissions
+- Red Hat OpenShift 3.11 with Cluster Admin permissions
 - [oc CLI](https://docs.openshift.com/container-platform/3.11/cli_reference/get_started_cli.html)
 - DB2 Database
 
@@ -116,27 +123,6 @@ cd cloudpak-for-applications
 git checkout liberty
 ```
 
-### Create application database infrastructure
-As said in the prerequisites section above, the Customer Order Services application uses uses DB2 as its database. Follow these steps to create the appropriate database, tables and data the application needs to:
-
-1. Copy the createOrderDB.sql and initialDataSet.sql files you can find in the Common directory of this repository over to the db2 host machine (or git clone the repository) in order to execute them later.
-
-2. Ssh into the db2 host
-
-3. Change to the db2 instance user: `su {database_instance_name}``
-
-4. Start db2: `db2start`
-
-4. Create the ORDERDB database: `db2 create database ORDERDB`
-
-5. Connect to the ORDERDB database: `db2 connect to ORDERDB`
-
-6. Execute the createOrderDB.sql script you copied over in step 1 in order to create the appropriate tables, relationships, primary keys, etc: `db2 -tf createOrderDB.sql`
-
-7. Execute the initialDataSet.sql script you copied over in step 1 to populate the ORDERDB database with the needed initial data set: `db2 -tf initialDataSet.sql`
-
-If you want to re-run the scripts, please make sure you drop the databases and create them again.
-
 ### Create the Security Context Constraint
 In order to deploy and run the WebSphere Liberty Docker image in an OpenShift cluster, we first need to configure certain security aspects for the cluster. The `Security Context Constraint` provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/ssc.yaml) grants the [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) that the WebSphere Liberty Docker container is running under the required privileges to function correctly.
 
@@ -148,7 +134,7 @@ oc apply -f ssc.yaml
 ```
 
 ### Create the projects
-Four RedHat OpenShift projects are required in this scenario:
+Four Red Hat OpenShift projects are required in this scenario:
 - Build: this project will contain the Jenkins server and the artifacts used to build the application image  
 - Dev: this is the `development` environment for this application
 - Stage: this is the `staging` environment for this application
@@ -175,7 +161,7 @@ oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n cos-liberty-prod
 ```
 
 ### Deploy Jenkins
-Some RedHat OpenShift clusters are configured to automatically provision a Jenkins instance in a build project. The steps below can be used if your cluster is not configured for automatic Jenkins provisioning:
+Some Red Hat OpenShift clusters are configured to automatically provision a Jenkins instance in a build project. The steps below can be used if your cluster is not configured for automatic Jenkins provisioning:
 
 ```
 oc project cos-liberty-build
@@ -194,7 +180,7 @@ oc policy add-role-to-user edit system:serviceaccount:cos-liberty-build:jenkins 
 ```
 
 ### Import the deployment templates
-RedHat OpenShift [templates](https://docs.openshift.com/container-platform/3.11/dev_guide/templates.html) are used to make artifact creation easier and repeatable. The template definition provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-deploy.yaml) defines a Kubernetes [`Service`](https://kubernetes.io/docs/concepts/services-networking/service/), [`Route`](https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html) and [`DeploymentConfig`](https://docs.openshift.com/container-platform/3.11/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations) for the CustomerOrderServices application.
+Red Hat OpenShift [templates](https://docs.openshift.com/container-platform/3.11/dev_guide/templates.html) are used to make artifact creation easier and repeatable. The template definition provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-deploy.yaml) defines a Kubernetes [`Service`](https://kubernetes.io/docs/concepts/services-networking/service/), [`Route`](https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html) and [`DeploymentConfig`](https://docs.openshift.com/container-platform/3.11/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations) for the CustomerOrderServices application.
 
 The `gse-liberty-deploy` template defines the following:
 - `service` listening on ports `9080`, `9443` and `9082`
@@ -215,7 +201,7 @@ oc create -f template-liberty-deploy.yaml -n cos-liberty-prod
 ```
 
 ### Create the deployment definitions
-In this step the `gse-liberty-deploy` template will be used to create a RedHat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `cos-liberty` in the `dev`, `stage` and `prod` namespaces.
+In this step the `gse-liberty-deploy` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `cos-liberty` in the `dev`, `stage` and `prod` namespaces.
 
 The result will be:
 - `service` listening on ports `9080`, `9443` and `9082`
@@ -246,7 +232,7 @@ oc create -f template-liberty-build.yaml -n cos-liberty-build
 ```
 
 ### Create the build definitions
-In this step the `gse-liberty-build` template will be used to create a RedHat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `cos-liberty` in the `build` namespaces.
+In this step the `gse-liberty-build` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `cos-liberty` in the `build` namespaces.
 
 The result will be:
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
@@ -261,9 +247,9 @@ oc new-app gse-liberty-build -p APPLICATION_NAME=cos-liberty -p SOURCE_URL="http
 ```
 
 ### Run the pipeline  
-The newly created pipeline can be started from the RedHat OpenShift console which allows access to the Jenkins logs but also tracks the progress in the OCP console.
+The newly created pipeline can be started from the Red Hat OpenShift console which allows access to the Jenkins logs but also tracks the progress in the OCP console.
 
-1. Navigate to **Application Console --> Customer Order Services on Liberty - Build --> Builds --> Pipelines** and click the **Start Pipeline** button
+1. Navigate to **Application Console --> Pet Clinic on Liberty - Build --> Builds --> Pipelines** and click the **Start Pipeline** button
 
   ![Run Pipeline](images/liberty-deploy/run-pipeline.jpg)
 
@@ -292,9 +278,9 @@ The newly created pipeline can be started from the RedHat OpenShift console whic
   ![Complete](images/liberty-deploy/complete.jpg)
 
 ## Validate the Application
-Now that the pipeline is complete, validate the Customer Order Services application is deployed and running in `dev`, `stage` and `prod`
+Now that the pipeline is complete, validate the Pet Clinic application is deployed and running in `dev`, `stage` and `prod`
 
-1. In the OpenShift Console, navigate to **Application Console --> Customer Order Services on Liberty - Dev --> Applications --> Deployments** and click on the link in the **Latest Version** column
+1. In the OpenShift Console, navigate to **Application Console --> Pet Clinic on Liberty - Dev --> Applications --> Deployments** and click on the link in the **Latest Version** column
 
   ![Deployment](images/liberty-deploy/deployment.jpg)
 
@@ -381,13 +367,13 @@ Here are the steps to create your CI/CD deployment.
 
 1. the developer **commits** the `application source code` and `deployment artifacts` in to **git**
 
-2. a `webhook` automatically **triggers** the **Jenkins Pipeline** in the RedHat OpenShift `build` project
+2. a `webhook` automatically **triggers** the **Jenkins Pipeline** in the Red Hat OpenShift `build` project
 
 3. the `pipeline` **checks out** the `Jenkins pipeline defintion file`, `application source code` and `deployment artifacts` from **git** and uses **maven** to **build** and **test** the application
 
 4. the `oc start build` command is used to **build** an **immutable Docker Image** for the application which contains the OpenLiberty runtime and the newly compiled and tested application JAR ile.
 
-5. the **immutable Docker Image** is added to the `ImageStream` of the `build` project and **pushed** to the `Docker Registry` in the RedHat OpenShift cluster
+5. the **immutable Docker Image** is added to the `ImageStream` of the `build` project and **pushed** to the `Docker Registry` in the Red Hat OpenShift cluster
 
 6. the **immutable Docker Image** is then `tagged` for the `dev` project
 
@@ -413,7 +399,7 @@ The application runs unchanged in a container using the OpenLiberty runtime.  Th
 
 1. The **Pet Clinic** application is a web-based, Spring Boot sample application that is accessed via a **Browser**
 
-2. A RedHat OpenShift **route** is the public entry point in to the Container Platform
+2. A Red Hat OpenShift **route** is the public entry point in to the Container Platform
 
 3. The **route** passes the request from the browser to a **Kubernetes Service** which is an abstraction that defines a logical set of Kubernetes Pods and a policy by which to access them
 
