@@ -10,5 +10,9 @@ RUN springBootUtility thin \
  --targetLibCachePath=/staging/lib.index.cache
 
 FROM openliberty/open-liberty:springBoot2-ubi-min
+USER root
 COPY --from=staging /staging/lib.index.cache /lib.index.cache
 COPY --from=staging /staging/thinClinic.jar /config/dropins/spring/thinClinic.jar
+RUN chown -R 1001.0 /config /lib.index.cache
+
+USER 1001
