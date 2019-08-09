@@ -1,4 +1,4 @@
-# Spring Modernization
+gse-spring-build# Spring Modernization
 
 **Spring modernization** gives operations team the opportunity to embrace modern operations best practices without putting change requirements on the development team. Modernizing from plain, on-premise Spring Boot application to the SpringBoot application running on the OpenLiberty runtime in a container allows the application to be moved to the cloud without code changes and yet have option to have support from IBM and other benefits.
 
@@ -152,19 +152,19 @@ It is a good Kubernetes practice to create a [service account](https://kubernete
 
 Issue the commands shown below to create the `websphere` service account and bind the ibm-websphere-scc to it in each of the projects:
 ```
-oc create serviceaccount websphere -n spring-liberty-dev
-oc create serviceaccount websphere -n spring-liberty-stage
-oc create serviceaccount websphere -n spring-liberty-prod
-oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n spring-liberty-dev
-oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n spring-liberty-stage
-oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n spring-liberty-prod
+oc create serviceaccount websphere -n petclinic-liberty-dev
+oc create serviceaccount websphere -n petclinic-liberty-stage
+oc create serviceaccount websphere -n petclinic-liberty-prod
+oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n petclinic-liberty-dev
+oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n petclinic-liberty-stage
+oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n petclinic-liberty-prod
 ```
 
 ### Deploy Jenkins
 Some Red Hat OpenShift clusters are configured to automatically provision a Jenkins instance in a build project. The steps below can be used if your cluster is not configured for automatic Jenkins provisioning:
 
 ```
-oc project spring-liberty-build
+oc project petclinic-liberty-build
 oc new-app jenkins-persistent
 ```
 
@@ -174,15 +174,15 @@ During provisioning of the Jenkins master a service account with the name `jenki
 Issue the commands below to allow the `jenkins` service account to `edit` artifacts in the `dev`, `stage` and `prod` projects.
 
 ```
-oc policy add-role-to-user edit system:serviceaccount:spring-liberty-build:jenkins -n spring-liberty-dev
-oc policy add-role-to-user edit system:serviceaccount:spring-liberty-build:jenkins -n spring-liberty-stage
-oc policy add-role-to-user edit system:serviceaccount:spring-liberty-build:jenkins -n spring-liberty-prod
+oc policy add-role-to-user edit system:serviceaccount:petclinic-liberty-build:jenkins -n petclinic-liberty-dev
+oc policy add-role-to-user edit system:serviceaccount:petclinic-liberty-build:jenkins -n petclinic-liberty-stage
+oc policy add-role-to-user edit system:serviceaccount:petclinic-liberty-build:jenkins -n petclinic-liberty-prod
 ```
 
 ### Import the deployment templates
 Red Hat OpenShift [templates](https://docs.openshift.com/container-platform/3.11/dev_guide/templates.html) are used to make artifact creation easier and repeatable. The template definition provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-deploy.yaml) defines a Kubernetes [`Service`](https://kubernetes.io/docs/concepts/services-networking/service/), [`Route`](https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html) and [`DeploymentConfig`](https://docs.openshift.com/container-platform/3.11/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations) for the CustomerOrderServices application.
 
-The `gse-liberty-deploy` template defines the following:
+The `gse-spring-deploy` template defines the following:
 - `service` listening on ports `9080`, `9443` and `9082`
 - `route` to expose the `9443` port externally
 - `DeploymentConfig` to host the WebSphere Liberty container.
@@ -192,16 +192,16 @@ The `gse-liberty-deploy` template defines the following:
   - The `securityContext` is set to allow read/write access to the filesystem and to run the container as `user 1001`
   - The deployment will be updated if a new image is loaded to the `ImageStream` or if a change to the configuration is detected.
 
-Issue the commands below to load the template named `gse-liberty-deploy` in the `dev`, `stage` and `prod` projects.
+Issue the commands below to load the template named `gse-spring-deploy` in the `dev`, `stage` and `prod` projects.
 
 ```
-oc create -f template-liberty-deploy.yaml -n spring-liberty-dev
-oc create -f template-liberty-deploy.yaml -n spring-liberty-stage
-oc create -f template-liberty-deploy.yaml -n spring-liberty-prod
+oc create -f template-liberty-deploy.yaml -n petclinic-liberty-dev
+oc create -f template-liberty-deploy.yaml -n petclinic-liberty-stage
+oc create -f template-liberty-deploy.yaml -n petclinic-liberty-prod
 ```
 
 ### Create the deployment definitions
-In this step the `gse-liberty-deploy` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `spring-liberty` in the `dev`, `stage` and `prod` namespaces.
+In this step the `gse-spring-deploy` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `petclinic-liberty` in the `dev`, `stage` and `prod` namespaces.
 
 The result will be:
 - `service` listening on ports `9080`, `9443` and `9082`
@@ -211,39 +211,39 @@ The result will be:
 Issue the following commands to create the applications from the template:
 
 ```
-oc new-app gse-liberty-deploy -p APPLICATION_NAME=spring-liberty -n spring-liberty-dev
-oc new-app gse-liberty-deploy -p APPLICATION_NAME=spring-liberty -n spring-liberty-stage
-oc new-app gse-liberty-deploy -p APPLICATION_NAME=spring-liberty -n spring-liberty-prod
+oc new-app gse-spring-deploy -p APPLICATION_NAME=petclinic-liberty -n petclinic-liberty-dev
+oc new-app gse-spring-deploy -p APPLICATION_NAME=petclinic-liberty -n petclinic-liberty-stage
+oc new-app gse-spring-deploy -p APPLICATION_NAME=petclinic-liberty -n petclinic-liberty-prod
 ```
 
 ### Import the build templates
 In this step a template for the `build` process will be loaded in to the `build` project. The template provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-build.yaml) defines the following artifacts:
 
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
-- An ImageStream for WebSphere Liberty which will pull down the latest version of the `ibmcom/websphere-liberty:kernel-ubi-min` image and will monitor DockerHub for any updates.
+- An ImageStream for WebSphere Liberty which will pull down the latest version of the `openliberty/open-liberty:springBoot2-ubi-min` image and will monitor DockerHub for any updates.
 - A `binary` [BuildConfig](https://docs.openshift.com/container-platform/3.11/dev_guide/builds/build_strategies.html) that will be used by the Jenkins Pipeline to build the application Docker image
 - A `jenkinsfile` BuildConfig that defines the `Pipeline` using the `Jenkinsfile` in GitHub
 - Parameters to allow the WebSphere Liberty image and GitHub repository to be provided when the template is instantiated
 
-Issue the commands below to load the template named `gse-liberty-build` in the `build` projects.
+Issue the commands below to load the template named `gse-springboot-build` in the `build` projects.
 
 ```
-oc create -f template-liberty-build.yaml -n spring-liberty-build
+oc create -f template-liberty-build.yaml -n petclinic-liberty-build
 ```
 
 ### Create the build definitions
-In this step the `gse-liberty-build` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `spring-liberty` in the `build` namespaces.
+In this step the `gse-springboot-build` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `petclinic-liberty` in the `build` namespaces.
 
 The result will be:
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
-- An ImageStream for WebSphere Liberty which will pull down the latest version of the `ibmcom/websphere-liberty:kernel-ubi-min` image and will monitor DockerHub for any updates.
+- An ImageStream for WebSphere Liberty which will pull down the latest version of the `openliberty/open-liberty:springBoot2-ubi-min` image and will monitor DockerHub for any updates.
 - A `binary` [BuildConfig](https://docs.openshift.com/container-platform/3.11/dev_guide/builds/build_strategies.html) that will be used by the Jenkins Pipeline to build the application Docker image
 - A `jenkinsfile` BuildConfig that defines the `Pipeline` using the `Jenkinsfile` in GitHub (with the URL provided as a parameter when the application is created)
 
 Issue the following commands to create the application from the template:
 
 ```
-oc new-app gse-liberty-build -p APPLICATION_NAME=spring-liberty -p SOURCE_URL="https://github.com/ibm-cloud-architecture/cloudpak-for-applications" -n spring-liberty-build
+oc new-app gse-springboot-build -p APPLICATION_NAME=petclinic-liberty -p SOURCE_URL="https://github.com/ibm-cloud-architecture/cloudpak-for-applications" -n petclinic-liberty-build
 ```
 
 ### Run the pipeline  
@@ -288,7 +288,7 @@ Now that the pipeline is complete, validate the Pet Clinic application is deploy
 
   ![Pods](images/liberty-deploy/pods.jpg)
 
-3. Click **Applications --> Routes** and click on the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `spring-liberty-dev`
+3. Click **Applications --> Routes** and click on the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `petclinic-liberty-dev`
 
   ![Route](images/liberty-deploy/route.jpg)
 
