@@ -72,6 +72,12 @@ objects:
         name: ${APPLICATION_NAME}
       spec:
         containers:
+        - env:
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
           image: ${APPLICATION_NAME}
           imagePullPolicy: Always
           name: ${APPLICATION_NAME}

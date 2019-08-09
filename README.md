@@ -152,19 +152,19 @@ It is a good Kubernetes practice to create a [service account](https://kubernete
 
 Issue the commands shown below to create the `websphere` service account and bind the ibm-websphere-scc to it in each of the projects:
 ```
-oc create serviceaccount websphere -n cos-liberty-dev
-oc create serviceaccount websphere -n cos-liberty-stage
-oc create serviceaccount websphere -n cos-liberty-prod
-oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n cos-liberty-dev
-oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n cos-liberty-stage
-oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n cos-liberty-prod
+oc create serviceaccount websphere -n spring-liberty-dev
+oc create serviceaccount websphere -n spring-liberty-stage
+oc create serviceaccount websphere -n spring-liberty-prod
+oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n spring-liberty-dev
+oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n spring-liberty-stage
+oc adm policy add-scc-to-user ibm-websphere-scc -z websphere -n spring-liberty-prod
 ```
 
 ### Deploy Jenkins
 Some Red Hat OpenShift clusters are configured to automatically provision a Jenkins instance in a build project. The steps below can be used if your cluster is not configured for automatic Jenkins provisioning:
 
 ```
-oc project cos-liberty-build
+oc project spring-liberty-build
 oc new-app jenkins-persistent
 ```
 
@@ -174,9 +174,9 @@ During provisioning of the Jenkins master a service account with the name `jenki
 Issue the commands below to allow the `jenkins` service account to `edit` artifacts in the `dev`, `stage` and `prod` projects.
 
 ```
-oc policy add-role-to-user edit system:serviceaccount:cos-liberty-build:jenkins -n cos-liberty-dev
-oc policy add-role-to-user edit system:serviceaccount:cos-liberty-build:jenkins -n cos-liberty-stage
-oc policy add-role-to-user edit system:serviceaccount:cos-liberty-build:jenkins -n cos-liberty-prod
+oc policy add-role-to-user edit system:serviceaccount:spring-liberty-build:jenkins -n spring-liberty-dev
+oc policy add-role-to-user edit system:serviceaccount:spring-liberty-build:jenkins -n spring-liberty-stage
+oc policy add-role-to-user edit system:serviceaccount:spring-liberty-build:jenkins -n spring-liberty-prod
 ```
 
 ### Import the deployment templates
@@ -195,13 +195,13 @@ The `gse-liberty-deploy` template defines the following:
 Issue the commands below to load the template named `gse-liberty-deploy` in the `dev`, `stage` and `prod` projects.
 
 ```
-oc create -f template-liberty-deploy.yaml -n cos-liberty-dev
-oc create -f template-liberty-deploy.yaml -n cos-liberty-stage
-oc create -f template-liberty-deploy.yaml -n cos-liberty-prod
+oc create -f template-liberty-deploy.yaml -n spring-liberty-dev
+oc create -f template-liberty-deploy.yaml -n spring-liberty-stage
+oc create -f template-liberty-deploy.yaml -n spring-liberty-prod
 ```
 
 ### Create the deployment definitions
-In this step the `gse-liberty-deploy` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `cos-liberty` in the `dev`, `stage` and `prod` namespaces.
+In this step the `gse-liberty-deploy` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `spring-liberty` in the `dev`, `stage` and `prod` namespaces.
 
 The result will be:
 - `service` listening on ports `9080`, `9443` and `9082`
@@ -211,9 +211,9 @@ The result will be:
 Issue the following commands to create the applications from the template:
 
 ```
-oc new-app gse-liberty-deploy -p APPLICATION_NAME=cos-liberty -p DB2_HOST=<your DB2 host> -p DB2_PORT=<your DB2 host> -p DB2_USER=<your DB2 user> -p DB2_PASSWORD=<your DB2 password> -n cos-liberty-dev
-oc new-app gse-liberty-deploy -p APPLICATION_NAME=cos-liberty -p DB2_HOST=<your DB2 host> -p DB2_PORT=<your DB2 host> -p DB2_USER=<your DB2 user> -p DB2_PASSWORD=<your DB2 password> -n cos-liberty-stage
-oc new-app gse-liberty-deploy -p APPLICATION_NAME=cos-liberty -p DB2_HOST=<your DB2 host> -p DB2_PORT=<your DB2 host> -p DB2_USER=<your DB2 user> -p DB2_PASSWORD=<your DB2 password> -n cos-liberty-prod
+oc new-app gse-liberty-deploy -p APPLICATION_NAME=spring-liberty -n spring-liberty-dev
+oc new-app gse-liberty-deploy -p APPLICATION_NAME=spring-liberty -n spring-liberty-stage
+oc new-app gse-liberty-deploy -p APPLICATION_NAME=spring-liberty -n spring-liberty-prod
 ```
 
 ### Import the build templates
@@ -228,11 +228,11 @@ In this step a template for the `build` process will be loaded in to the `build`
 Issue the commands below to load the template named `gse-liberty-build` in the `build` projects.
 
 ```
-oc create -f template-liberty-build.yaml -n cos-liberty-build
+oc create -f template-liberty-build.yaml -n spring-liberty-build
 ```
 
 ### Create the build definitions
-In this step the `gse-liberty-build` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `cos-liberty` in the `build` namespaces.
+In this step the `gse-liberty-build` template will be used to create a Red Hat OpenShift [application](https://docs.openshift.com/container-platform/3.11/dev_guide/application_lifecycle/new_app.html) named `spring-liberty` in the `build` namespaces.
 
 The result will be:
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
@@ -243,7 +243,7 @@ The result will be:
 Issue the following commands to create the application from the template:
 
 ```
-oc new-app gse-liberty-build -p APPLICATION_NAME=cos-liberty -p SOURCE_URL="https://github.com/ibm-cloud-architecture/cloudpak-for-applications" -n cos-liberty-build
+oc new-app gse-liberty-build -p APPLICATION_NAME=spring-liberty -p SOURCE_URL="https://github.com/ibm-cloud-architecture/cloudpak-for-applications" -n spring-liberty-build
 ```
 
 ### Run the pipeline  
@@ -288,7 +288,7 @@ Now that the pipeline is complete, validate the Pet Clinic application is deploy
 
   ![Pods](images/liberty-deploy/pods.jpg)
 
-3. Click **Applications --> Routes** and click on the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `cos-liberty-dev`
+3. Click **Applications --> Routes** and click on the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `spring-liberty-dev`
 
   ![Route](images/liberty-deploy/route.jpg)
 

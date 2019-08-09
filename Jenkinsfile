@@ -34,7 +34,7 @@ pipeline {
         sh """
         env
         mvn -v
-        cd CustomerOrderServicesProject
+        cd spring-petclinic
         mvn clean package
         """
       }
@@ -45,7 +45,7 @@ pipeline {
       steps {
         sh """
         mvn -v
-        cd CustomerOrderServicesProject
+        cd spring-petclinic
         mvn test
         """
       }
