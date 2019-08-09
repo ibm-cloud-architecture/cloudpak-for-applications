@@ -266,38 +266,38 @@ The newly created pipeline can be started from the Red Hat OpenShift console whi
 
 1. Navigate to **Application Console --> Pet Clinic on Liberty - Build --> Builds --> Pipelines** and click the **Start Pipeline** button
 
-  ![Run Pipeline](images/liberty-deploy/run-pipeline.jpg)
+  ![Run Pipeline](images/run-pipeline.jpg)
 
 2. When the pipeline starts, click the `view log` link to go to the Jenkins administration console. Note that it may take a couple of minutes before the `view log` link appears on the first pipeline build
 
-  ![View Log](images/liberty-deploy/view-log.jpg)
+  ![View Log](images/view-log.jpg)
 
 3. When prompted, log in with your OpenShift account and grant the required access permissions. The Jenkins console log will be displayed as shown below:
 
-  ![Jenkins Log](images/liberty-deploy/jenkins-log.jpg)
+  ![Jenkins Log](images/jenkins-log.jpg)
 
 4. Return to the OpenShift Console and track the progress of the pipeline
 
-  ![Running](images/liberty-deploy/pipeline-running.jpg)
+  ![Running](images/pipeline-running.jpg)
 
 5. The pipeline will eventually stop at the **Promotion Gate** for approval to deploy to Production. Click the **Input Required** link as shown below
 
-  ![Gate](images/liberty-deploy/gate.jpg)
+  ![Gate](images/gate.jpg)
 
 6. When the *Promote application to Production* question is displayed, click **Proceed**
 
-  ![Promote](images/twas-deploy/promote.jpg)
+  ![Promote](images/promote.jpg)
 
 7. Return to the OpenShift Console and validate that the pipeline is now complete
 
-  ![Complete](images/liberty-deploy/complete.jpg)
+  ![Complete](images/complete.jpg)
 
 ## Validate the Application
 Now that the pipeline is complete, validate the Pet Clinic application is deployed and running in `dev`, `stage` and `prod`
 
 1. In the OpenShift Console, navigate to **Application Console --> Pet Clinic on Liberty - Dev --> Applications --> Deployments** and click on the link in the **Latest Version** column
 
-  ![Deployment](images/liberty-deploy/deployment.jpg)
+  ![Deployment](images/deployment.jpg)
 
 2. Information about the deployment will be displayed including the **image** that is being used (note the **tag** on the image as it will be the same in the `stage` and `prod` deployments). After a few minutes the container will be marked as **ready**
 
@@ -311,9 +311,7 @@ Now that the pipeline is complete, validate the Pet Clinic application is deploy
 
   ![Dev Running](images/liberty-deploy/dev-running.jpg)
 
-5. Log in to the application with `username: rbarcia` and `password: bl0wfish`
-
-6. Repeat the validations for the `stage` and `prod` Projects.
+5. Repeat the validations for the `stage` and `prod` Projects.
 
 ## Summary
 This application has been modified from the initial Spring Framework version to Spring Boot v2 to run on Open Liberty and deployed by the IBM CloudPak for Applications.
