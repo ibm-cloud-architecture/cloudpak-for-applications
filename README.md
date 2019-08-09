@@ -81,19 +81,19 @@ The steps were:
 
 1. Configure the Red Hat OpenShift Cluster for WebSphere by creating the necessary `SecurityContextConstraints` definition. The file can be found here:
 
-- [scc.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/ssc.yaml)
+- [scc.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/ssc.yaml)
 
 2. Create the Red Hat OpenShift **build template** that would be used to define the Red Hat OpenShift artifacts related to the build process including `ImageStream` and `BuildConfig` definitions. The file can be found here:
 
-- [template-libery-build.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-build.yaml)
+- [template-libery-build.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-build.yaml)
 
 3. Create the Red Hat OpenShift **deployment template** that would be used to define the Red Hat OpenShift artifacts related to the Pet Clinic application including `DeploymentConfig`, `Service` and `Route` definitions. The file can be found here:
 
-- [template-libery-deploy.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-deploy.yaml)
+- [template-libery-deploy.yaml](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-deploy.yaml)
 
 4. Create the Jenkins `Jenkinsfile` for the pipeline. The Jenkinsfile defines the steps that the pipeline takes to build the Pet Clinic application, create an immutable Docker Image and then move the image through the `dev`, `stage` and `prod` environments. The file can be found here:
 
-- [Jenkinsfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Jenkinsfile)
+- [Jenkinsfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Jenkinsfile)
 
 5. Create the `build` project, load the **build template** and configure **Jenkins**
 
@@ -120,13 +120,13 @@ You can clone the repository from its main GitHub repository page and checkout t
 ```
 git clone https://github.com/ibm-cloud-architecture/cloudpak-for-applications.git
 cd cloudpak-for-applications
-git checkout liberty
+git checkout spring
 ```
 
 ### Create the Security Context Constraint
-In order to deploy and run the WebSphere Liberty Docker image in an OpenShift cluster, we first need to configure certain security aspects for the cluster. The `Security Context Constraint` provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/ssc.yaml) grants the [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) that the WebSphere Liberty Docker container is running under the required privileges to function correctly.
+In order to deploy and run the WebSphere Liberty Docker image in an OpenShift cluster, we first need to configure certain security aspects for the cluster. The `Security Context Constraint` provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/ssc.yaml) grants the [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) that the WebSphere Liberty Docker container is running under the required privileges to function correctly.
 
-A **cluster administrator** can use the file provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/ssc.yaml) with the following command to create the Security Context Constraint (SCC):
+A **cluster administrator** can use the file provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/ssc.yaml) with the following command to create the Security Context Constraint (SCC):
 
 ```
 cd Deployment/OpenShift
@@ -140,7 +140,7 @@ Four Red Hat OpenShift projects are required in this scenario:
 - Stage: this is the `staging` environment for this application
 - Prod: this is the `production` environment for this application
 
-The file provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/liberty-projects.yaml) contains the definitions for the four projects in a single file to make creation easier
+The file provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/liberty-projects.yaml) contains the definitions for the four projects in a single file to make creation easier
 
 Issue the command shown below to create the projects
 ```
@@ -180,7 +180,7 @@ oc policy add-role-to-user edit system:serviceaccount:cos-liberty-build:jenkins 
 ```
 
 ### Import the deployment templates
-Red Hat OpenShift [templates](https://docs.openshift.com/container-platform/3.11/dev_guide/templates.html) are used to make artifact creation easier and repeatable. The template definition provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-deploy.yaml) defines a Kubernetes [`Service`](https://kubernetes.io/docs/concepts/services-networking/service/), [`Route`](https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html) and [`DeploymentConfig`](https://docs.openshift.com/container-platform/3.11/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations) for the CustomerOrderServices application.
+Red Hat OpenShift [templates](https://docs.openshift.com/container-platform/3.11/dev_guide/templates.html) are used to make artifact creation easier and repeatable. The template definition provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-deploy.yaml) defines a Kubernetes [`Service`](https://kubernetes.io/docs/concepts/services-networking/service/), [`Route`](https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html) and [`DeploymentConfig`](https://docs.openshift.com/container-platform/3.11/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations) for the CustomerOrderServices application.
 
 The `gse-liberty-deploy` template defines the following:
 - `service` listening on ports `9080`, `9443` and `9082`
@@ -217,7 +217,7 @@ oc new-app gse-liberty-deploy -p APPLICATION_NAME=cos-liberty -p DB2_HOST=<your 
 ```
 
 ### Import the build templates
-In this step a template for the `build` process will be loaded in to the `build` project. The template provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/liberty/Deployment/OpenShift/template-liberty-build.yaml) defines the following artifacts:
+In this step a template for the `build` process will be loaded in to the `build` project. The template provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-build.yaml) defines the following artifacts:
 
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
 - An ImageStream for WebSphere Liberty which will pull down the latest version of the `ibmcom/websphere-liberty:kernel-ubi-min` image and will monitor DockerHub for any updates.
