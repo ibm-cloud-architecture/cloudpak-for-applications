@@ -95,7 +95,7 @@ The final file can be found here:
 ### Deploy
 The **deploy** phase created the Jenkins, Kubernetes and Red Hat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different Red Hat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here](liberty-deploy.md)
 
-  ![Pipeline](images/liberty-deploy/overview.jpg)
+  ![Pipeline](images/overview.jpg)
 
 The steps were:
 
