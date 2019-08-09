@@ -1,23 +1,20 @@
-gse-spring-build# Spring Modernization
+# Spring Modernization
 
-**Spring modernization** gives operations team the opportunity to embrace modern operations best practices without putting change requirements on the development team. Modernizing from plain, on-premise Spring Boot application to the SpringBoot application running on the OpenLiberty runtime in a container allows the application to be moved to the cloud without code changes and yet have option to have support from IBM and other benefits.
+**Spring modernization** describes the process of upgrading existing Spring Framework and Spring Boot v1 applications to use [Spring Boot v2](https://spring.io/projects/spring-boot). Pivotal have made some changes to the [list of supported versions of Spring](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions) that may require modernization of existing applications to Spring Boot v2.
 
-This type of modernization should not require any code changes and can be driven by the operations team. This path gets the application in to a container with the least amount of effort but doesn't modernize the application or the runtime.
+With the [Open Liberty](https://openliberty.io/) project, IBM have [provided support for Spring Boot](https://www.ibm.com/cloud/blog/open-liberty-loves-spring) and made [optimizations to the runtime and Docker images specifically for Spring Boot](https://openliberty.io/blog/2018/07/02/creating-dual-layer-docker-images-for-spring-boot-apps.html).
 
-Let's talk about **why** we want would want to deploy our applications on Liberty instead of using native SpringBoot which under the covers deploys on Tomcat.  
+There are some benefits of running Spring Boot applications on the Open Liberty runtime:
+
 - Performance. Benchmarks have shows that Liberty perform better than Tomcat on both throughput and response time.
 
-- Size.  The memory footprint of Liberty is smaller than tomcat, but more importantly the Spring boot libraries can be separated from the runtime libraries. When we look at the way Docker builds it's images using layers, the application portion is much smaller if we build out images in the optimized way.  This means faster build time, and if you're storing every version of your application you build, the delta between versions is much smaller
+- Size.  The memory footprint of Liberty is smaller than tomcat, but more importantly the Spring Boot libraries can be separated from the runtime libraries. When we look at the way Docker builds it's images using layers, the application portion is much smaller if we build out images in the optimized way.  This means faster build time, and if you're storing every version of your application you build, the delta between versions is much smaller
 
-- Support. If you're running on Openshift using IBM Cloud Paks, using the Liberty runtime is included in your licensing model, so using Liberty comes at no additional cost, but if need any support for Liberty it's included.  If you stick with standard springboot with tomcat, you'll have to either run on an unsupported platform, or pay for additional support for the tomcat runtime.
+- Support. If you're running on OpenShift using IBM Cloud Paks, using the Liberty runtime is included in your licensing model, so using Liberty comes at no additional cost, but if need any support for Liberty it's included.  If you stick with standard Spring Boot with tomcat, you'll have to either run on an unsupported platform, or pay for additional support for the tomcat runtime.
 
--  Consistent runtime model.  Running Liberty has many best practices especially in the Kubernetes/Openshift world.  There are built in metrics and monitoring tools which are specifically designed to be integrated into OpenShift.  Using Liberty allows you to leverage many if these automatic connections to better maintain your environment.
+-  Consistent runtime model.  Running Liberty has many best practices especially in the Kubernetes/OpenShift world.  There are built in metrics and monitoring tools which are specifically designed to be integrated into OpenShift.  Using Liberty allows you to leverage many if these automatic connections to better maintain your environment.
 
-**Ok** enough with the Marketing stuff, let's talk about how to actually do this.
-
-[Get Code](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/tree/spring)
-
-Check out the code above.
+This repository holds a solution that is the result of a modernization for an Spring application that was upgraded to Spring Boot on Open Liberty and deployed by the IBM CloudPak for Applications to RedHat OpenShift.
 
 ## Table of Contents
 
@@ -45,7 +42,7 @@ Check out the code above.
 Pet Clinic is a demonstration application that was created in 2003 to show the features and functions of the Spring Framework. A description of the original application can be found in the **The Pet Clinic Application** section of the [readme](https://projects.spring.io/spring-petclinic/#quick-start)
 
 ## How the Application was Modernized
-In order to modernize the application from the Spring Framework to Spring Boot and WebSphere Liberty running on OpenShift, the application went through **code changes**, **build** and **deploy** phases.
+In order to modernize the application from the Spring Framework to Spring Boot and Open Liberty running on OpenShift, the application went through **code changes**, **build** and **deploy** phases.
 
 ### Code Changes
 Pet Clinic was modernized by the open source community in 2013 from Spring Framework 2.5 to Spring Framework 3.0 and then in 2016 to Spring Boot. The process of making the code changes is outside of the scope of this document, however the general modernization process is described below:
@@ -55,22 +52,40 @@ Pet Clinic was modernized by the open source community in 2013 from Spring Frame
 - [Spring Framework to Spring Boot](https://www.baeldung.com/spring-boot-migration)
 
 ### Build
-The **build** phase created the Dockerfile for the application. The steps were:
+The **build** phase created the Dockerfile for the application.
 
-1. The `Dockerfile` required to build the **immutable Docker Image** containing the application and WebSphere Liberty was created using the `openliberty/open-liberty:springBoot2-ubi-min` image.
+A Spring Boot application JAR or WAR file is a self-contained artifact. It packages all of the application dependencies inside the final artifact alongside the application content, including an embedded server implementation, such as Tomcat, Jetty, or Undertow. The result is a fat artifact that is easy to run on any server that has a JVM. It also results in a large artifact, even for the smallest hello world Spring Boot web application.
 
-  ```
-  FROM openliberty/open-liberty:springBoot2-ubi-min
-  COPY --chown=1001:0 spring-petclinic/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /config/dropins/spring/
-  ```
+The Pet Clinic `Dockerfile` for the self-contained jar is shown below:
 
-  The final file can be found here:
+```
+FROM openliberty/open-liberty:springBoot2-ubi-min
+COPY --chown=1001:0 spring-petclinic/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /config/dropins/spring/
+```
+
+In order to optimize the Docker image, the [Dual Layer Approach](https://openliberty.io/blog/2018/07/02/creating-dual-layer-docker-images-for-spring-boot-apps.html) that IBM has created is used and resulted in the `Dockerfile` shown below:
+
+```
+ARG IMAGE=openliberty/open-liberty:springBoot2-ubi-min
+FROM ${IMAGE} as staging
+
+COPY --chown=1001:0 spring-petclinic/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /staging/fatClinic.jar
+
+RUN springBootUtility thin \
+ --sourceAppPath=/staging/fatClinic.jar \
+ --targetThinAppPath=/staging/thinClinic.jar \
+ --targetLibCachePath=/staging/lib.index.cache
+
+FROM ${IMAGE}
+COPY --from=staging /staging/lib.index.cache /lib.index.cache
+COPY --from=staging /staging/thinClinic.jar /config/dropins/spring/thinClinic.jar
+```
+
+The final file can be found here:
 
   - [Dockerfile](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Dockerfile)
 
 2. The containerized application was tested locally before the code and configuration files were committed to the **git** repository
-
-Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-build.md) XXXXXXXX
 
 ### Deploy
 The **deploy** phase created the Jenkins, Kubernetes and Red Hat OpenShift artifacts required to automate the build and deployment pipeline for the application. For illustration purposes, the application was deployed to three different Red Hat OpenShift projects to simulate `development`, `staging` and `production`. The diagram below shows the flow through the pipeline. A more detailed description can be found [here](liberty-deploy.md)
@@ -104,7 +119,7 @@ The steps were:
 Detailed, step-by-step instructions on how to replicate these steps are provided [here](liberty-deploy.md)
 
 ## Deploy the Application
-The following steps will deploy the modernized Pet Clinic application in a WebSphere Liberty container to a Red Hat OpenShift cluster.
+The following steps will deploy the modernized Pet Clinic application in a Open Liberty container to a Red Hat OpenShift cluster.
 
 ### Prerequisites
 You will need the following:
@@ -124,7 +139,7 @@ git checkout spring
 ```
 
 ### Create the Security Context Constraint
-In order to deploy and run the WebSphere Liberty Docker image in an OpenShift cluster, we first need to configure certain security aspects for the cluster. The `Security Context Constraint` provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/ssc.yaml) grants the [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) that the WebSphere Liberty Docker container is running under the required privileges to function correctly.
+In order to deploy and run the Open Liberty Docker image in an OpenShift cluster, we first need to configure certain security aspects for the cluster. The `Security Context Constraint` provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/ssc.yaml) grants the [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) that the Open Liberty Docker container is running under the required privileges to function correctly.
 
 A **cluster administrator** can use the file provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/ssc.yaml) with the following command to create the Security Context Constraint (SCC):
 
@@ -185,7 +200,7 @@ Red Hat OpenShift [templates](https://docs.openshift.com/container-platform/3.11
 The `gse-spring-deploy` template defines the following:
 - `service` listening on ports `9080`, `9443` and `9082`
 - `route` to expose the `9443` port externally
-- `DeploymentConfig` to host the WebSphere Liberty container.
+- `DeploymentConfig` to host the Open Liberty container.
   - The `image` for the container is taken from the [`ImageStream`](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) that will be populated by the Jenkins pipeline.
   - `environment variables` are defined for the DB2 database used by the application allowing for environment specific information to be injected
   - [Probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/) for `liveness` and `readiness` are defined to check port 9443 is active
@@ -206,7 +221,7 @@ In this step the `gse-spring-deploy` template will be used to create a Red Hat O
 The result will be:
 - `service` listening on ports `9080`, `9443` and `9082`
 - `route` to expose the `9443` port externally
-- `DeploymentConfig` to host the WebSphere Liberty container. The deployment config will wait for a `docker image` to be loaded in to the `ImageStream` by the Jenkins pipeline.
+- `DeploymentConfig` to host the Open Liberty container. The deployment config will wait for a `docker image` to be loaded in to the `ImageStream` by the Jenkins pipeline.
 
 Issue the following commands to create the applications from the template:
 
@@ -220,10 +235,10 @@ oc new-app gse-spring-deploy -p APPLICATION_NAME=petclinic-liberty -n petclinic-
 In this step a template for the `build` process will be loaded in to the `build` project. The template provided [here](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/blob/spring/Deployment/OpenShift/template-liberty-build.yaml) defines the following artifacts:
 
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
-- An ImageStream for WebSphere Liberty which will pull down the latest version of the `openliberty/open-liberty:springBoot2-ubi-min` image and will monitor DockerHub for any updates.
+- An ImageStream for Open Liberty which will pull down the latest version of the `openliberty/open-liberty:springBoot2-ubi-min` image and will monitor DockerHub for any updates.
 - A `binary` [BuildConfig](https://docs.openshift.com/container-platform/3.11/dev_guide/builds/build_strategies.html) that will be used by the Jenkins Pipeline to build the application Docker image
 - A `jenkinsfile` BuildConfig that defines the `Pipeline` using the `Jenkinsfile` in GitHub
-- Parameters to allow the WebSphere Liberty image and GitHub repository to be provided when the template is instantiated
+- Parameters to allow the Open Liberty image and GitHub repository to be provided when the template is instantiated
 
 Issue the commands below to load the template named `gse-springboot-build` in the `build` projects.
 
@@ -236,7 +251,7 @@ In this step the `gse-springboot-build` template will be used to create a Red Ha
 
 The result will be:
 - An [ImageStream](https://docs.openshift.com/container-platform/3.11/dev_guide/managing_images.html) for the application image. This will be populated by the Jenkins Pipeline
-- An ImageStream for WebSphere Liberty which will pull down the latest version of the `openliberty/open-liberty:springBoot2-ubi-min` image and will monitor DockerHub for any updates.
+- An ImageStream for Open Liberty which will pull down the latest version of the `openliberty/open-liberty:springBoot2-ubi-min` image and will monitor DockerHub for any updates.
 - A `binary` [BuildConfig](https://docs.openshift.com/container-platform/3.11/dev_guide/builds/build_strategies.html) that will be used by the Jenkins Pipeline to build the application Docker image
 - A `jenkinsfile` BuildConfig that defines the `Pipeline` using the `Jenkinsfile` in GitHub (with the URL provided as a parameter when the application is created)
 
@@ -301,7 +316,7 @@ Now that the pipeline is complete, validate the Pet Clinic application is deploy
 6. Repeat the validations for the `stage` and `prod` Projects.
 
 ## Summary
-This application has been modified from the initial [WebSphere ND v8.5.5 version](https://github.com/ibm-cloud-architecture/cloudpak-for-applications/tree/was855) to run on WebSphere Liberty and deployed by the IBM CloudPak for Applications.
+This application has been modified from the initial Spring Framework version to Spring Boot v2 to run on Open Liberty and deployed by the IBM CloudPak for Applications.
 
 
 
@@ -312,49 +327,7 @@ This application has been modified from the initial [WebSphere ND v8.5.5 version
 
 
 
-In the base directory run
-```
-cd spring-petclinic
-mvn clean package
-```
-Now that we've built our "Fat Jar", we can put it into a Docker container
 
-You can see the Dockerfile in the Source Code
-```
-FROM openliberty/open-liberty:springBoot2-ubi-min
-COPY --chown=1001:0 spring-petclinic/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /config/dropins/spring/
-```
-
-We can build the docker container:
-`docker build . -t spring-liberty`
-
-And we can run it:
-`docker run -p 9080:9080 spring-liberty`
-
-View application running here
-http://localhost:9080/
-
-That's all fine and well, however we still have a very "Fat Jar".  Any update to the code will create a very large Jar file, and the entire layer will have to be replaced and uploaded again.  Take a look at the Dockerfile-opt file and you will see this code separates the spring libraries from the application code base.
-```
-ARG IMAGE=openliberty/open-liberty:springBoot2-ubi-min
-FROM ${IMAGE} as staging
-
-COPY --chown=1001:0 spring-petclinic/target/spring-petclinic-2.1.0.BUILD-SNAPSHOT.jar /staging/fatClinic.jar
-
-RUN springBootUtility thin \
- --sourceAppPath=/staging/fatClinic.jar \
- --targetThinAppPath=/staging/thinClinic.jar \
- --targetLibCachePath=/staging/lib.index.cache
-
-FROM ${IMAGE}
-COPY --from=staging /staging/lib.index.cache /lib.index.cache
-COPY --from=staging /staging/thinClinic.jar /config/dropins/spring/thinClinic.jar
-```
-
-You can build this using this command
-`docker build . -f Dockerfile-opt -t spring-liberty-thin`
-
-Everything runs the same, but your image delta is much smaller.
 
 Now on to the CI/CD Pipeline in Openshift
 
