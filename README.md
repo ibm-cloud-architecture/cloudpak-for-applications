@@ -1,4 +1,4 @@
-# CloudPak for Applications: Operational Modernization Solution
+# Cloud Pak for Applications: Operational Modernization Solution
 
 ## Introduction
 **Operational modernization** gives an operations team the opportunity to embrace modern operations best practices without putting change requirements on the development team. Modernizing from WebSphere Network Deployment (ND) to the **traditional WebSphere Application Server Base V9 runtime** in a container allows the application to be moved to the cloud without code changes.
