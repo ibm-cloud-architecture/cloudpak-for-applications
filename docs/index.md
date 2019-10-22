@@ -8,7 +8,7 @@ A high level overview of key application modernization concepts is available in 
 There are several approaches to application modernization and provided are key reference implementations for approaching your implementation
 
 * [Runtime modernization](./liberty/README.md) -- Updating the application runtime to a suitable cloud-native framework and deploying in Red Hat OpenShift
-* Spring modernization -- Updated a prior Spring application by updating to the latest Spring Boot and deploying in Red Hat OpenShift
+* [Spring modernization](./spring/README.md) -- Updated a prior Spring application by updating to the latest Spring Boot and deploying in Red Hat OpenShift
 * [Operation modernization](./was90/README.md) -- Repackaging the application to deploy within a container but maintaining a monolith application without changes to the application or runtime
 
 
