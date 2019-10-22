@@ -1,0 +1,13 @@
+site_name: Application Modernization
+repo_name: 'ibm-cloud-architecture/cloudpak-for-applications'
+repo_url: https://github.com/ibm-cloud-architecture/cloudpak-for-applications
+nav:
+  - Introduction: index.md
+  - Runtime modernization : liberty/README.md
+  - Spring modernization : spring/README.md
+  - Operational modernization : was90/README.md
+theme:
+  name: material
+markdown_extensions:
+  - admonition
+  - codehilite
