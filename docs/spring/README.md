@@ -16,28 +16,6 @@ There are some benefits of running Spring Boot applications on the Open Liberty 
 
 This repository holds a solution that is the result of a modernization for an Spring application that was upgraded to Spring Boot on Open Liberty and deployed by the IBM CloudPak for Applications to RedHat OpenShift.
 
-## Table of Contents
-
-- [Application Overview](#application-overview)
-- [How the Application was Modernized](#how-the-application-was-modernized)
-  - [Code Changes](#code-changes)
-  - [Build](#build)
-  - [Deploy](#deploy)
-- [Deploy the Application](#deploy-the-application)
-  - [Getting the project repository](#getting-the-project-repository)
-  - [Create the Security Context Constraint](#create-the-security-context-constraint)
-  - [Create the projects](#create-the-projects)
-  - [Create a service account](#create-a-service-account)
-  - [Deploy Jenkins](#deploy-jenkins)
-  - [Update the Jenkins service account](update-the-jenkins-service-account)
-  - [Import the deployment templates](#import-the-deployment-templates)
-  - [Create the deployment definitions](#create-the-deployment-definitions)
-  - [Import the build templates](#import-the-build-templates)
-  - [Create the build definitions](#create-the-build-definitions)
-  - [Run the pipeline](#run-the-pipeline)
-- [Validate the Application](#validate-the-application)
-- [Summary](#summary)
-
 ## Application Overview
 Pet Clinic is a demonstration application that was created in 2003 to show the features and functions of the Spring Framework. A description of the original application can be found in the **The Pet Clinic Application** section of the [readme](https://projects.spring.io/spring-petclinic/#quick-start)
 

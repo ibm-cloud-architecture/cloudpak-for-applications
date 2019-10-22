@@ -4,7 +4,7 @@ repo_url: https://github.com/ibm-cloud-architecture/cloudpak-for-applications
 nav:
   - Introduction: index.md
   - Runtime modernization : liberty/README.md
-  - Spring modernization : index.md
+  - Spring modernization : spring/README.md
   - Operational modernization : was90/README.md
 theme:
   name: material
