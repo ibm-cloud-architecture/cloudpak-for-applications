@@ -1,5 +1,6 @@
 // Jenkinsfile for Liberty App - CI/CD
 def templateName = 'gse-liberty'
+def gitCommit
 
 openshift.withCluster() {
   env.NAMESPACE = openshift.project()
@@ -23,6 +24,8 @@ pipeline {
                     openshift.withProject() {
                         echo "Using project: ${openshift.project()}"
                         echo "APPLICATION_NAME: ${params.APPLICATION_NAME}"
+                        gitCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                        echo "checked out git commit ${gitCommit}"
                     }
                 }
             }
