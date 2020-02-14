@@ -33,8 +33,10 @@ This repository holds a solution that is the result of a **runtime modernization
   - [Create the deployment definitions](#create-the-deployment-definitions)
   - [Import the build templates](#import-the-build-templates)
   - [Create the build definitions](#create-the-build-definitions)
-  - [Run the pipeline](#run-the-pipeline)
-- [Validate the Application](#validate-the-application)
+  - [Run the pipeline on OpenShift 3.11](#run-the-pipeline-on-311)
+  - [Run the pipeline on OpenShift 4.x](#run-the-pipeline-on-4x)
+- [Validate the Application on 3.11](#validate-the-application-on-311)
+- [Validate the Application on 4.x](#validate-the-application-on-4x)
 - [Summary](#summary)
 
 ## Application Overview
@@ -315,7 +317,10 @@ Issue the following commands to create the application from the template:
 oc new-app gse-liberty-build -p APPLICATION_NAME=cos-liberty -p SOURCE_URL="https://github.com/ibm-cloud-architecture/cloudpak-for-applications" -n cos-liberty-build
 ```
 
-### Run the pipeline  
+## Run the pipeline
+### For 3.11 directions [click here](#run-the-pipeline-on-311); for 4.x directions [click here](#run-the-pipeline-on-4x).
+
+### Run the pipeline on 3.11
 The newly created pipeline can be started from the RedHat OpenShift console which allows access to the Jenkins logs but also tracks the progress in the OCP console.
 
 1. Navigate to **Application Console --> Customer Order Services on Liberty - Build --> Builds --> Pipelines** and click the **Start Pipeline** button
@@ -346,7 +351,7 @@ The newly created pipeline can be started from the RedHat OpenShift console whic
 
   ![Complete](images/liberty-deploy/complete.jpg)
 
-## Validate the Application
+## Validate the Application on 3.11
 Now that the pipeline is complete, validate the Customer Order Services application is deployed and running in `dev`, `stage` and `prod`
 
 1. In the OpenShift Console, navigate to **Application Console --> Customer Order Services on Liberty - Dev --> Applications --> Deployments** and click on the link in the **Latest Version** column
@@ -360,6 +365,61 @@ Now that the pipeline is complete, validate the Customer Order Services applicat
 3. Click **Applications --> Routes** and click on the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `cos-liberty-dev`
 
   ![Route](images/liberty-deploy/route.jpg)
+
+4. Add `/CustomerOrderServicesWeb` to the end of the URL in the browser to access the application
+
+  ![Dev Running](images/liberty-deploy/dev-running.jpg)
+
+5. Log in to the application with `username: rbarcia` and `password: bl0wfish`
+
+6. Repeat the validations for the `stage` and `prod` Projects.
+
+### Run the pipeline on 4.x
+The newly created pipeline can be started from the RedHat OpenShift console which allows access to the Jenkins logs but also tracks the progress in the OCP console.
+
+1. Navigate to **Builds** from the Developer view and click the **Start Build** button from the **Actions** dropdown
+
+  ![Run Pipeline](images/liberty-deploy/4.x-build-pipeline.jpg)
+
+2. When the pipeline starts, click the `view log` link to go to the Jenkins administration console. Note that it may take a couple of minutes before the `view log` link appears on the first pipeline build
+
+  ![View Log](images/liberty-deploy/4.x-view-log.jpg)
+
+3. When prompted, log in with your OpenShift account and grant the required access permissions. The Jenkins console log will be displayed as shown below:
+
+  ![Jenkins Log](images/liberty-deploy/jenkins-log.jpg)
+
+4. Return to the OpenShift Console and track the progress of the pipeline
+
+  ![Running](images/liberty-deploy/4.x-pipeline-running.jpg)
+
+5. The pipeline will eventually stop at the **Promotion Gate** for approval to deploy to Production. Click the **Input Required** link as shown below
+
+  ![Gate](images/liberty-deploy/4.x-gate.jpg)
+
+6. When the *Promote application to Production* question is displayed, click **Proceed**
+
+  ![Promote](images/liberty-deploy/4.x-promote.jpg)
+
+7. Return to the OpenShift Console and validate that the pipeline is now complete
+
+  ![Complete](images/liberty-deploy/4.x-complete.jpg)
+
+## Validate the Application on 4.x
+Now that the pipeline is complete, validate the Customer Order Services application is deployed and running in `dev`, `stage` and `prod`
+
+1. In the OpenShift Console, navigate to **Topology** view and click on the cos-liberty pod to view pod details, including images
+
+#### Topology
+  ![Deployment](images/liberty-deploy/4.x-deployment.jpg)
+
+#### Containers
+
+![Deployment](images/liberty-deploy/4.x-pods.jpg)
+
+3. From the Topography view, you can also view the **route** for the application. Note that the URL is < application_name >-< project_name >.< ocp cluster url >. In this case the project name is `cos-liberty-dev`
+
+  ![Route](images/liberty-deploy/4.x-routes.jpg)
 
 4. Add `/CustomerOrderServicesWeb` to the end of the URL in the browser to access the application
 
