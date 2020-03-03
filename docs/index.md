@@ -7,8 +7,13 @@ A high level overview of key application modernization concepts is available in 
 
 There are several approaches to application modernization and provided are key reference implementations for approaching your implementation
 
-* [Runtime modernization](./liberty/README.md) -- Updating the application runtime to a suitable cloud-native framework and deploying in Red Hat OpenShift
+### Runtime modernization
+* [Runtime modernization](./liberty/README.md) -- Updating the application runtime to a suitable cloud-native framework (Liberty) and deploying in Red Hat OpenShift. This solution shows different deployment options including using modern CI/CD tools (Tekton & ArgoCD) and using heritage CI/CD tools (Jenkins)
+
+### Spring Framework modernization
 * [Spring modernization](./spring/README.md) -- Updated a prior Spring application by updating to the latest Spring Boot and deploying in Red Hat OpenShift
+
+### Operational modernization with Heritage CI/CD tools
 * [Operation modernization](./was90/README.md) -- Repackaging the application to deploy within a container but maintaining a monolith application without changes to the application or runtime
 
 
