@@ -21,3 +21,4 @@ There are several approaches to application modernization and provided are key r
 
 * [Application Modernization](https://ibm-cloud-architecture.github.io/deliverables/application-modernization.html) assets
 * [Installing](https://cloudpak8s.io/apps/cp4a_overview/) Cloud Pak for Applications
+* [Installing Cloud Pak for Applications on IBM Cloud](https://github.com/vandepol/CP4AonOCPonIBMCloud/blob/master/README.md)
