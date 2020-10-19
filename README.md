@@ -27,7 +27,7 @@ The following are prerequisites for deploying the original ASIS version of this 
 You can clone the repository from its main GitHub repository page and checkout the appropriate branch for this version of the application.
 
 1. `git clone https://github.com/ibm-cloud-architecture/cloudpak-for-applications.git`
-2. `cd refarch-jee-customerorder`  
+2. `cd cloudpak-for-applications`  
 3. `git checkout was855`  
 
 
