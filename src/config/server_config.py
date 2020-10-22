@@ -10,7 +10,7 @@ NodeName=AdminControl.getNode()
 # The following variables are used to replace sensitive data in the configuration for the application.
 # The values for these variables were not collected because the includeSensitiveData option was not specified.
 # ============================================================
-Default01Node_cells_Default01Cell_nodes_Default01Node_node_xml_Node_1_DBUser_password_1=''
+Default01Node_cells_Default01Cell_nodes_Default01Node_node_xml_Node_1_DBUser_password_1='db2inst1'
 # ============================================================
 
 print 'Starting Creating JVM Properties'
@@ -32,7 +32,7 @@ print 'Starting Creating Connection Factories'
 
 print 'Starting Creating JDBC Providers'
 AdminConfigVar_0=AdminConfig.create('JDBCProvider', Node, [['name', 'DB2_Using_IBM_JCC_Driver_(XA)'], ['implementationClassName', 'com.ibm.db2.jcc.DB2XADataSource'], ['providerType', 'DB2 Using IBM JCC Driver (XA)'], ['description', 'Two-phase commit DB2 JCC provider that supports JDBC 4.0 using the IBM Data Server Driver for JDBC and SQLJ. IBM Data Server Driver is the next generation of the DB2 Universal JCC driver. Data sources created under this provider support the use of XA to perform 2-phase commit processing. Use of JDBC driver type 2 on WebSphere Application Server for Z/OS is not supported for data sources created under this provider. This provider is configurable in version 7.0 and later nodes.'], ['classpath', '${DB2_JCC_DRIVER_PATH}/db2jcc4.jar;${UNIVERSAL_JDBC_DRIVER_PATH}/db2jcc_license_cu.jar;${DB2_JCC_DRIVER_PATH}/db2jcc_license_cisuz.jar'], ['xa', 'true']])
-AdminConfigVar_1=AdminTask.createDatasource(AdminConfigVar_0, ["-name", "OrderDS", "-jndiName", "jdbc/orderds", "-dataStoreHelperClassName", "com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper", "-componentManagedAuthenticationAlias", "Default01Node(cells/Default01Cell/nodes/Default01Node|node.xml#Node_1)DBUser", "-configureResourceProperties", "[[databaseName java.lang.String ORDERDB] [driverType java.lang.Integer 4] [serverName java.lang.String 9.37.200.39] [portNumber java.lang.Integer 50000] ]"])
+AdminConfigVar_1=AdminTask.createDatasource(AdminConfigVar_0, ["-name", "OrderDS", "-jndiName", "jdbc/orderds", "-dataStoreHelperClassName", "com.ibm.websphere.rsadapter.DB2UniversalDataStoreHelper", "-componentManagedAuthenticationAlias", "Default01Node(cells/Default01Cell/nodes/Default01Node|node.xml#Node_1)DBUser", "-configureResourceProperties", "[[databaseName java.lang.String ORDERDB] [driverType java.lang.Integer 4] [serverName java.lang.String db2.db2.svc] [portNumber java.lang.Integer 50000] ]"])
 AdminConfigVar_2=AdminConfig.showAttribute(AdminConfigVar_1, 'propertySet')
 AdminConfig.create('J2EEResourceProperty', AdminConfigVar_2, [['name', 'beginTranForResultSetScrollingAPIs'], ['type', 'java.lang.String'], ['value', 'false']])
 AdminConfig.create('J2EEResourceProperty', AdminConfigVar_2, [['name', 'beginTranForVendorAPIs'], ['type', 'java.lang.String'], ['value', 'false']])
@@ -62,8 +62,17 @@ AdminConfigVar_3=AdminConfig.showAttribute(AdminConfigVar_1, 'connectionPool')
 AdminConfig.modify(AdminConfigVar_3, [['stuckThreshold', '0'], ['reapTime', '180'], ['testConnectionInterval', '0'], ['connectionTimeout', '180'], ['surgeCreationInterval', '0'], ['surgeThreshold', '-1'], ['stuckTimerTime', '0'], ['numberOfFreePoolPartitions', '0'], ['minConnections', '1'], ['unusedTimeout', '1800'], ['agedTimeout', '0'], ['numberOfSharedPoolPartitions', '0'], ['purgePolicy', 'EntirePool'], ['maxConnections', '10'], ['freePoolDistributionTableSize', '0'], ['stuckTime', '0'], ['testConnection', 'false'], ['numberOfUnsharedPoolPartitions', '0']])
 
 print 'Starting Creating Variables'
-AdminTask.setVariable(['-scope', 'Node=' + NodeName, '-variableName', 'DB2_JCC_DRIVER_PATH', '-variableValue', '/opt/ibm/db2/V11.5/java'])
-AdminTask.setVariable(['-scope', 'Node=' + NodeName, '-variableName', 'UNIVERSAL_JDBC_DRIVER_PATH', '-variableValue', '${WAS_INSTALL_ROOT}/universalDriver/lib'])
+AdminTask.setVariable(['-scope', 'Node=' + NodeName, '-variableName', 'DB2_JCC_DRIVER_PATH', '-variableValue', '/work/config/lib'])
+AdminTask.setVariable(['-scope', 'Node=' + NodeName, '-variableName', 'UNIVERSAL_JDBC_DRIVER_PATH', '-variableValue', '/work/config/lib'])
+
+print 'Set JPA 2.0 and JAX-RS 1.1 (non-default versions)'
+# Configuring JPA Specification
+AdminTask.listSupportedJPASpecifications('[-versionOnly]')
+AdminTask.showJPASpecLevel(Server)
+AdminTask.modifyJPASpecLevel(Server, '[ -specLevel 2.0]')
+AdminTask.showJPASpecLevel(Server)
+# Configuring JAX-RS Specification
+AdminTask.modifyJaxrsProvider(Server, '[ -provider 1.1]')
 
 print 'Starting Saving Configuration Changes Before Application Deployment'
 AdminConfig.save()
