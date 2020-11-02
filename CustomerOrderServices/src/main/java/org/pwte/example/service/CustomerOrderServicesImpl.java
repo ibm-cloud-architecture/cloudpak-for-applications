@@ -7,9 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
+//import javax.annotation.security.RolesAllowed;
+//import javax.ejb.SessionContext;
+//import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -30,14 +31,15 @@ import org.pwte.example.exception.OrderModifiedException;
 import org.pwte.example.exception.OrderNotOpenException;
 import org.pwte.example.exception.ProductDoesNotExistException;
 
-@Stateless
-@RolesAllowed(value="SecureShopper")
+//@Stateless
+//@RolesAllowed(value="SecureShopper")
+@ApplicationScoped
 public class CustomerOrderServicesImpl implements CustomerOrderServices {
 
 	@PersistenceContext
 	protected EntityManager em;
 	
-	@Resource SessionContext ctx;
+	//@Resource SessionContext ctx;
 	
 	public Order addLineItem(LineItem newLineItem)
 			throws CustomerDoesNotExistException, OrderNotOpenException,
@@ -194,7 +196,9 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 	*/
 	
 	public AbstractCustomer loadCustomer() throws CustomerDoesNotExistException,GeneralPersistenceException {
-		String user = ctx.getCallerPrincipal().getName();
+		//String user = ctx.getCallerPrincipal().getName();
+		//TODO: fix security
+		String user = "rbarcia";
 		Query query = em.createQuery("select c from AbstractCustomer c where c.user = :user");
 		query.setParameter("user", user);
 		return (AbstractCustomer)query.getSingleResult();
@@ -216,7 +220,9 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 	
 	public Date getOrderHistoryLastUpdatedTime()
 	{
-		String user = ctx.getCallerPrincipal().getName();
+		//TODO: fix security
+		//String user = ctx.getCallerPrincipal().getName();
+		String user = "rbarcia";
 		Query query = em.createQuery("select MAX(o.submittedTime) from Order o join  o.customer c where c.user = :user");
 		query.setParameter("user", user);
 		return (Date)query.getSingleResult();

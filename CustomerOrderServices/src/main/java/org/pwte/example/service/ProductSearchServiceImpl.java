@@ -2,8 +2,9 @@ package org.pwte.example.service;
 
 
 import java.util.List;
+import javax.enterprise.context.ApplicationScoped;
 
-import javax.ejb.Stateless;
+//import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -13,7 +14,8 @@ import org.pwte.example.domain.Product;
 import org.pwte.example.exception.CategoryDoesNotExist;
 import org.pwte.example.exception.ProductDoesNotExistException;
 
-@Stateless
+//@Stateless
+@ApplicationScoped
 public class ProductSearchServiceImpl implements ProductSearchService {
 
 	@PersistenceContext
