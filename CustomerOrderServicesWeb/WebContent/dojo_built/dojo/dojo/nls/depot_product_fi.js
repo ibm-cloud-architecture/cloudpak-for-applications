@@ -1,1 +1,0 @@
-dojo.provide("dojo.nls.depot_product_fi");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.fi");dijit.nls.common.fi={"buttonOk":"OK","buttonCancel":"Peruuta","buttonSave":"Tallenna","itemClose":"Sulje"};
