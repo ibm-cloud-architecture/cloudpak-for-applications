@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>IBM Gauge Widget</title>
+<style>
+	@import "_Gauge.css";
+	@import "../../../dojo/resources/dojo.css";
+	@import "../../../dijit/themes/tundra/tundra.css";
+	@import "../../../dijit/themes/noir/noir.css";
+	@import "../../../dijit/themes/soria/soria.css";
+	@import "../../../dijit/tests/css/dijitTests.css"; 
+	/* group multiple buttons in a row */
+	body {
+		margin:10px;
+	}
+	.box {
+		display: block;
+	}
+	.box .dijitButton {
+		margin-right: 10px;
+	}
+</style>
+<script type="text/javascript">
+	djConfig = {
+		parseOnLoad: true,
+		isDebug: true
+	};
+</script>
+<script type="text/javascript" src="../../../dojo/dojo.js"></script>
+<script type="text/javascript" src="../../../dijit/tests/_testCommon.js"></script>
+<script language="JavaScript" type="text/javascript">
+	dojo.require("ibm_gauge.widget.AnalogGauge");
+	dojo.require("ibm_gauge.widget.BarGraph");
+	dojo.require("dijit.Menu");
+	dojo.require("dijit.form.Button");
+	dojo.require("dijit.form.ComboBox");
+	dojo.require("dijit.form.NumberSpinner");
+	dojo.require("dojo.data.ItemFileReadStore");
+	dojo.require("dojo.parser");
+	logMessage = console.debug;
+	
+	dojo.addOnLoad(init);
+	
+	var gauge;
+	var ranges = [ {low:5, high:10, hover:'5 - 10'},
+				   {low:10, high:20, hover:'10 - 20'},
+				   {low:20, high:30, hover:'20 - 30'},
+				   {low:30, high:40, hover:'30 - 40'},
+				   {low:40, high:50, hover:'40 - 50'},
+				   {low:50, high:60, hover:'50 - 60'},
+				   {low:60, high:70, hover:'60 - 70'},
+				   {low:70, high:75, hover:'70 - 75'}
+				 ];
+
+
+	
+	function init() {
+		gauge = dijit.byId("testGauge");
+		var fill = new Object();
+		fill.type = "linear";
+		fill.x1 = 0;
+		fill.x2 = 0;
+		fill.y2 = 0;
+		fill.y1 = gauge.gaugeHeight;
+		fill.colors = [{offset: 0, color: "#ECECEC"}, {offset: 1, color: "white"}];
+		gauge.gaugeBackground = fill;
+		for (var i=0; i<ranges.length; i++) {
+			gauge.addRange(ranges[i]);
+		}
+		for(var i=5; i<=75; i+=5){
+			gauge.addIndicator({ value:i, 
+				 				 type:'line', 
+								 length:5, 
+								 offset:125,
+								 label:''+i});
+		}
+		var valueIndicator = new ibm_gauge.widget.Indicator({
+			value:17, 
+			type:"arrow", 
+			length: 135, 
+			width: 3,
+			hover:'Value: 17', 
+			title: 'Value'
+		});
+		var targetIndicator = new ibm_gauge.widget.Indicator({
+			value:6, 
+			type:"line", 
+			color:'#D00000', 
+			width: 3,
+			hover:'Target: 6', 
+			title: 'Target'
+		});
+		gauge.addIndicator(targetIndicator);
+		gauge.addIndicator(valueIndicator);
+	}
+
+	dojo.addOnLoad(init2);
+
+	var bg;
+	var ranges2 = [ {low:5, high:10, hover:'5 - 10'},
+				   {low:10, high:20, hover:'10 - 20'},
+				   {low:20, high:30, hover:'20 - 30'} 
+				 ];
+	var tickMarks2 = [5,10,15,20,25,30];
+
+	function init2() {
+		bg = dijit.byId("testBarGraph");
+		var fill = new Object();
+		fill.type = "linear";
+		fill.x1 = bg.gaugeWidth/2;
+		fill.x2 = bg.gaugeWidth/2;
+		fill.y2 = 0;
+		fill.y1 = bg.gaugeHeight;
+		fill.colors = [{offset: 0, color: "#ECECEC"}, {offset: 1, color: "white"}];
+		bg.gaugeBackground = fill;
+		for (var i=0; i<ranges2.length; i++) {
+			bg.addRange(ranges2[i]);
+		}
+		for (var i=0; i<tickMarks2.length; i++) 
+		{
+			bg.addIndicator({ value:tickMarks2[i], 
+				 			  type:'line', 
+							  length:5, 
+							  offset:-5,
+							  width: 1,
+							  label:''+tickMarks2[i]});
+		}
+		var valueIndicator = new ibm_gauge.widget.Indicator({
+			value:17, 
+			type:"bar", 
+			width: 7,
+			hover:'Value: 17',
+			title: 'Value'
+		});
+		var targetIndicator = new ibm_gauge.widget.Indicator({
+			value:22, 
+			type:"line", 
+			color:'#D00000', 
+			hover:'Target: 22',
+			title: 'Target'
+		});
+
+		bg.addIndicator(targetIndicator);
+		bg.addIndicator(valueIndicator);
+	}
+</script>
+</head>
+<body class="tundra">
+	<div dojoType="dojo.data.ItemFileReadStore" jsId="stateStore"
+		url="../tests/_data/states.json"></div>
+		<h2>Tundra</h2>
+		<div id='tundra' class="box tundra">
+			<button dojoType="dijit.form.Button" onClick='logMessage("clicked simple")'>
+				Button
+			</button>
+			<button dojoType="dijit.form.Button" iconClass="noteIcon" onClick='logMessage("clicked simple")'>
+				Button w/image
+			</button>
+			<button dojoType="dijit.form.Button" onClick='logMessage("clicked simple")' disabled='true'>
+				Disabled Button
+			</button>
+		<br><br>
+			<button dojoType="dijit.form.DropDownButton">
+				<span>Drop Down Button</span>
+				<div dojoType="dijit.Menu" style="display: none;">
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconCut"
+						onClick="logMessage('not actually cutting anything, just a test!')">Cut</div>
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconCopy"
+						onClick="logMessage('not actually copying anything, just a test!')">Copy</div>
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconPaste"
+						onClick="logMessage('not actually pasting anything, just a test!')">Paste</div>
+				</div>
+			</button>
+			<button dojoType="dijit.form.DropDownButton" iconClass="noteIcon">
+				<span>Button w/image</span>
+				<div dojoType="dijit.Menu" style="display: none;">
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconCut"
+						onClick="logMessage('not actually cutting anything, just a test!')">Cut</div>
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconCopy"
+						onClick="logMessage('not actually copying anything, just a test!')">Copy</div>
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconPaste"
+						onClick="logMessage('not actually pasting anything, just a test!')">Paste</div>
+				</div>
+			</button>
+			<button dojoType="dijit.form.DropDownButton" disabled='true'>
+				<span>Drop Down Disabled</span>
+				<div dojoType="dijit.Menu" style="display: none;">
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconCut"
+						onClick="logMessage('not actually cutting anything, just a test!')">Cut</div>
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconCopy"
+						onClick="logMessage('not actually copying anything, just a test!')">Copy</div>
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconPaste"
+						onClick="logMessage('not actually pasting anything, just a test!')">Paste</div>
+				</div>
+			</button>
+		<br><br>
+			<button dojoType="dijit.form.ComboButton" onClick='logMessage("clicked combo save")'>
+				<span>Combo Button</span>
+				<div dojoType="dijit.Menu" style="display: none;">
+					<div dojoType="dijit.MenuItem" iconClass="dijitEditorIconSave"
+						onClick="logMessage('not actually saving anything, just a test!')">Save</div>
+					<div dojoType="dijit.MenuItem" iconClass="dijitEditorIconSave"
+						onClick="logMessage('not actually saving anything, just a test!')">Save As</div>
+				</div>
+			</button>
+			<button dojoType="dijit.form.ComboButton" iconClass="noteIcon" onClick='logMessage("clicked combo save")'>
+				<span>Combo w/image</span>
+				<div dojoType="dijit.Menu" style="display: none;">
+					<div dojoType="dijit.MenuItem" iconClass="dijitEditorIconSave"
+						onClick="logMessage('not actually saving anything, just a test!')">Save</div>
+					<div dojoType="dijit.MenuItem" iconClass="dijitEditorIconSave"
+						onClick="logMessage('not actually saving anything, just a test!')">Save As</div>
+				</div>
+			</button>
+			<button dojoType="dijit.form.ComboButton" onClick='logMessage("clicked combo save")' disabled='true'>
+				<span>Combo Disabled</span>
+				<div dojoType="dijit.Menu" style="display: none;">
+					<div dojoType="dijit.MenuItem"  iconClass="dijitEditorIconSave"
+						onClick="logMessage('not actually saving anything, just a test!')">Save</div>
+					<div dojoType="dijit.MenuItem"
+						onClick="logMessage('not actually saving anything, just a test!')">Save As</div>
+				</div>
+			</button>
+		<br><br>
+			<input dojoType="dijit.form.ComboBox"
+					value="California"
+					class="medium"
+					store="stateStore"
+					searchAttr="name"
+					style="width: 300px;"
+					name="state2"
+					promptMessage="Please enter a state"
+			>
+
+			<input dojoType="dijit.form.ComboBox"
+					value="California"
+					class="medium"
+					store="stateStore"
+					searchAttr="name"
+					style="width: 300px;"
+					name="state2"
+					promptMessage="Please enter a state"
+					disabled="true"
+			>
+
+		<br><br>
+		<input dojoType="dijit.form.NumberSpinner" 
+			onChange="console.debug('onChange fired for widget id = ' + this.id + ' with value = ' + arguments[0]);"
+			value="900" 
+			constraints={max:1550,places:0}
+			maxlength="10">
+
+
+		<input dojoType="dijit.form.NumberSpinner" 
+			onChange="console.debug('onChange fired for widget id = ' + this.id + ' with value = ' + arguments[0]);"
+			value="900" 
+			disabled='true'
+			constraints={max:1550,places:0}
+			maxlength="10">
+
+		</div>
+		<br>
+
+		<h2>Noir</h2>
+		<div id='noir' class="box noir">
+		</div>
+		<br>
+
+		<h2>Soria</h2>
+		<div id='soria' class="box soria">
+		</div>
+		<br>
+
+		<h2>a11y mode</h2>
+		<div id='a11y' class="box dijit_a11y">
+		</div>
+		<br>
+
+		
+
+<script language='javascript'>
+	var html = dojo.byId("tundra").innerHTML;
+	dojo.byId("noir").innerHTML = html;
+	dojo.byId("a11y").innerHTML = html;
+	dojo.byId("soria").innerHTML = html;
+</script>
+<h2>IBM Gauge Widget</h2>
+<br>
+<br>
+<div	dojoType="ibm_gauge.widget.AnalogGauge"
+		id="testGauge"
+		gaugeWidth="300"
+		gaugeHeight="200"
+		cx=150
+		cy=175
+		radius=125
+		image="gaugeOverlay.png"
+		imageOverlay="true"
+		imageWidth="280"
+		imageHeight="155"
+		imageX="12"
+		imageY="38"
+		useRangeStyles="8"
+		hideValues="true">
+</div>
+<h2>IBM Bar Graph Widget</h2>
+<br>
+<br>
+<div	dojoType="ibm_gauge.widget.BarGraph"
+		id="testBarGraph"
+		gaugeHeight="55"
+		dataY="25"
+		dataHeight="25"
+		dataWidth="225"
+		useRangeStyles="8"
+		hideValues="true">
+</div>
+</body>
+</html>

@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import org.pwte.example.domain.Category;
 import org.pwte.example.exception.CategoryDoesNotExist;
 import org.pwte.example.service.ProductSearchService;
+import org.pwte.example.service.ProductSearchServiceImpl;
 
 @Path("/Category")
 public class CategoryResource 
@@ -25,6 +26,7 @@ public class CategoryResource
 	//@EJB ProductSearchService productSearch;
 	@Inject
 	ProductSearchService productSearch;
+	//ProductSearchService productSearch = new ProductSearchServiceImpl();
 	
 	/*
 	public CategoryResource() throws NamingException

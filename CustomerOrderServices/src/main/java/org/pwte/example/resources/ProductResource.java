@@ -26,15 +26,18 @@ import org.apache.wink.common.model.atom.AtomTextType;
 */
 import org.pwte.example.domain.Product;
 import org.pwte.example.exception.ProductDoesNotExistException;
+//import org.pwte.example.service.ProductSearchService;
 import org.pwte.example.service.ProductSearchService;
+import org.pwte.example.service.ProductSearchServiceImpl;
 
 
 @Path("/Product")
 public class ProductResource {
 
 	//@EJB ProductSearchService productSearch;
-	@Inject ProductSearchService productSearch;
-		
+	@Inject 
+	ProductSearchService productSearch;
+	//ProductSearchService productSearch = new ProductSearchServiceImpl();
 	/*	
 	public ProductResource() throws NamingException
 		{

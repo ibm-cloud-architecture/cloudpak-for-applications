@@ -2,7 +2,8 @@ package org.pwte.example.service;
 
 
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
+import java.util.Collection;
+import javax.enterprise.context.RequestScoped;
 
 //import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,11 +15,12 @@ import org.pwte.example.domain.Product;
 import org.pwte.example.exception.CategoryDoesNotExist;
 import org.pwte.example.exception.ProductDoesNotExistException;
 
+
 //@Stateless
-@ApplicationScoped
+@RequestScoped
 public class ProductSearchServiceImpl implements ProductSearchService {
 
-	@PersistenceContext
+	@PersistenceContext (name = "CustomerOrderServices")
 	protected EntityManager em;
 	
 	public Category loadCategory(int categoryId)throws CategoryDoesNotExist {
@@ -41,6 +43,22 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		Query query = em.createNamedQuery("product.by.cat.or.sub");
 		query.setParameter(1, categoryId);
 		query.setParameter(2, categoryId);
+
+		//debug-start
+		System.out.println("Query: "+query);
+		List<Product> res = query.getResultList();
+		System.out.println("Result: "+res);
+		for(int i = 0; i < res.size(); i++) {
+			Product p = res.get(i);
+			System.out.println(p.getName());
+			Collection<Category> c = p.getCategories();
+			if (c == null) 
+				System.out.println("categiries = null");
+			else	
+			     System.out.println(java.util.Arrays.toString(c.toArray()));
+        }
+		//debug-end
+
 		return query.getResultList();
 	}
 

@@ -18,7 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonIgnore;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 @Entity
 @Table(name="ORDERS")
@@ -47,12 +49,12 @@ public class Order implements Serializable {
 	@Version
 	protected long version;
 	  
-	@JsonIgnore
+	@JsonbTransient
 	public long getVersion() {
 		return version;
 	}
 	
-	@JsonIgnore
+	@JsonbTransient
 	public void setVersion(long version) {
 		this.version = version;
 	}
@@ -63,12 +65,12 @@ public class Order implements Serializable {
 		this.lineitems = lineitmes;
 	}
 	
-	@JsonIgnore
+	@JsonbTransient
 	public AbstractCustomer getCustomer() {
 		return customer;
 	}
 	
-	@JsonIgnore
+	@JsonbTransient
 	public void setCustomer(AbstractCustomer customer) {
 		this.customer = customer;
 	}

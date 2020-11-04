@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 //import javax.annotation.security.RolesAllowed;
 //import javax.ejb.SessionContext;
 //import javax.ejb.Stateless;
@@ -31,12 +31,13 @@ import org.pwte.example.exception.OrderModifiedException;
 import org.pwte.example.exception.OrderNotOpenException;
 import org.pwte.example.exception.ProductDoesNotExistException;
 
+
 //@Stateless
 //@RolesAllowed(value="SecureShopper")
-@ApplicationScoped
+@RequestScoped
 public class CustomerOrderServicesImpl implements CustomerOrderServices {
 
-	@PersistenceContext
+	@PersistenceContext (name = "CustomerOrderServices")
 	protected EntityManager em;
 	
 	//@Resource SessionContext ctx;

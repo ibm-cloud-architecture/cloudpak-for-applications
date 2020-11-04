@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<persistence-unit name="CustomerOrderServices">
+<persistence version="2.2"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
+                        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
 	
-		   <jta-data-source>jdbc/orderds</jta-data-source>
-		   <class>org.pwte.example.domain.Product</class>
-		   <class>org.pwte.example.domain.AbstractCustomer</class>
-		   <class>org.pwte.example.domain.BusinessCustomer</class>
-		   <class>org.pwte.example.domain.ResidentialCustomer</class>
-		   <class>org.pwte.example.domain.Order</class>
-		   <class>org.pwte.example.domain.LineItem</class>
-		   <class>org.pwte.example.domain.LineItemId</class>
-		   <class>org.pwte.example.domain.Category</class>
-		    <class>org.pwte.example.domain.Address</class>
-		   <properties>
-			<property name="openjpa.MaxFetchDepth" value="5" />
-			<property name="openjpa.jdbc.MappingDefaults"
-				    value="StoreEnumOrdinal=false" />
-			<property name="openjpa.jdbc.DBDictionary" value="db2" />
-		   </properties>
-	</persistence-unit>
+	<persistence-unit name="CustomerOrderServices" transaction-type="JTA">
+      <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+      <jta-data-source>jdbc/orderds</jta-data-source>
+       <!--
+      <class>org.pwte.example.domain.Product</class>
+      <class>org.pwte.example.domain.AbstractCustomer</class>
+      <class>org.pwte.example.domain.BusinessCustomer</class>
+      <class>org.pwte.example.domain.ResidentialCustomer</class>
+      <class>org.pwte.example.domain.Order</class>
+      <class>org.pwte.example.domain.LineItem</class>
+      <class>org.pwte.example.domain.LineItemId</class>
+      <class>org.pwte.example.domain.Category</class>
+      <class>org.pwte.example.domain.Address</class>
+      -->
+      <properties>
+         <!--
+         <property name="openjpa.MaxFetchDepth" value="5" />
+         <property name="openjpa.jdbc.MappingDefaults" value="StoreEnumOrdinal=false" />
+		   <property name="openjpa.jdbc.DBDictionary" value="db2" />
+		   <property name="hibernate.dialect" value="org.hibernate.dialect.DB2Dialect" />
+		   <property name="hibernate.connection.driver_class" value="com.ibm.db2.jcc.DB2Driver" />
+		   <property name="connection.url" value="jdbc:db2://localhost:50000/orderdb" />
+		   <property name="connection.username" value="db2inst1"/>
+         <property name="connection.password" value="db2inst1"/>
+         
+         <property name="hibernate.show_sql" value="true" />
+         <property name="hibernate.format_sql" value="true" />
+         -->
+         <property name="hibernate.enable_lazy_load_no_trans" value="true" /> 
+     
+      </properties>
+   </persistence-unit>
 </persistence>

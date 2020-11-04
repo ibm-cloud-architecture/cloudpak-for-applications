@@ -1,0 +1,14 @@
+{
+	"serviceType": "SOAP",
+	"serviceURL": "service.url.serviceprovider.com/soap",
+	"methods": [{
+		"name": "getSomething",
+		"parameters": [{
+			"name": "parm1",
+			"type": "str"
+		}, {
+			"name": "parm2",
+			"type": "str"
+		}]
+	}]
+}

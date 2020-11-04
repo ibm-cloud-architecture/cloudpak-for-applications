@@ -13,8 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
+//import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonProperty;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 
 @Entity
 @NamedQuery(name="top.level.category",query="select c from Category c where c.parent IS NULL")
@@ -40,10 +42,11 @@ public class Category implements Serializable {
 	@ManyToMany(mappedBy="categories",fetch=FetchType.LAZY)
 	private Collection<Product> products;
 	
-	@JsonProperty(value="id")
+	@JsonbProperty(value="id")
 	public int getCategoryID() {
 		return categoryID;
 	}
+	
 	public void setCategoryID(int categoryID) {
 		this.categoryID = categoryID;
 	}
@@ -54,28 +57,35 @@ public class Category implements Serializable {
 		this.name = name;
 	}
 	
-	@JsonIgnore
+	//trying workaround for JAX-B circular reference problem
+	/*
+	@JsonbTransient
 	public Category getParent() {
 		return parent;
 	}
+	@JsonbTransient
 	public void setParent(Category parent) {
 		this.parent = parent;
 	}
+	
+	@JsonbTransient
 	public Collection<Category> getSubCategories() {
 		return subCategories;
 	}
+	@JsonbTransient
 	public void setSubCategories(Collection<Category> subCategories) {
 		this.subCategories = subCategories;
 	}
 	
-	@JsonIgnore
+	@JsonbTransient
 	public Collection<Product> getProducts() {
 		return products;
 	}
+	@JsonbTransient
 	public void setProducts(Collection<Product> products) {
 		this.products = products;
 	}
-	
+	*/
 	
 
 }

@@ -1,0 +1,8 @@
+/*
+	Copyright (c) 2004-2010, The Dojo Foundation All Rights Reserved.
+	Available via Academic Free License >= 2.1 OR the modified BSD license.
+	see: http://dojotoolkit.org/license for details
+*/
+
+
+if(!dojo._hasResource["dojo.currency"]){dojo._hasResource["dojo.currency"]=true;dojo.provide("dojo.currency");dojo.require("dojo.number");dojo.require("dojo.i18n");dojo.requireLocalization("dojo.cldr","currency",null,"ROOT,af,ak,am,ar,asa,az,be,bez,bg,bm,bn,bo,br,ca,cgg,chr,cs,cy,da,dav,de,ebu,ee,el,el-polyton,en,en-au,en-bz,en-ca,en-hk,en-jm,en-mt,en-na,en-nz,en-sg,en-tt,es,es-ec,es-pr,es-us,et,fa,fa-af,ff,fi,fil,fr,fr-ca,ga,gl,gsw,guz,ha,he,hi,hr,hu,is,it,iw,ja,jmc,ka,kab,kam,kde,kea,khq,ki,kln,ko,ksb,lag,lg,lt,luo,luy,lv,mas,mer,mfe,mg,mk,ml,mo,mt,naq,nb,nd,ne,nl,nn,no,nyn,om,pa-arab,pa-pk,pl,pt,rm,ro,rof,ru,rwk,saq,seh,ses,sg,sh,shi,shi-tfng,sk,sl,sn,so,sq,sr,sr-latn,sv,sw,te,teo,th,ti,tl,tr,tzm,uk,ur,vi,vun,xog,yo,zh,zh-hans-hk,zh-hant,zh-hant-hk,zh-hk,zh-mo,zh-tw");dojo.require("dojo.cldr.monetary");dojo.currency._mixInDefaults=function(_1){_1=_1||{};_1.type="currency";var _2=dojo.i18n.getLocalization("dojo.cldr","currency",_1.locale)||{};var _3=_1.currency;var _4=dojo.cldr.monetary.getData(_3);dojo.forEach(["displayName","symbol","group","decimal"],function(_5){_4[_5]=_2[_3+"_"+_5];});_4.fractional=[true,false];return dojo.mixin(_4,_1);};dojo.currency.format=function(_6,_7){return dojo.number.format(_6,dojo.currency._mixInDefaults(_7));};dojo.currency.regexp=function(_8){return dojo.number.regexp(dojo.currency._mixInDefaults(_8));};dojo.currency.parse=function(_9,_a){return dojo.number.parse(_9,dojo.currency._mixInDefaults(_a));};}

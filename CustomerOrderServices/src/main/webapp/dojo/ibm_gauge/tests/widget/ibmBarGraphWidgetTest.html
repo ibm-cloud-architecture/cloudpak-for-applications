@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>IBM Bar Graph Widget</title>
+<style>
+	@import "BarGraph.css";
+	@import "../../../dojo/resources/dojo.css";
+	@import "../../../dijit/themes/tundra/tundra.css";
+</style>
+<script type="text/javascript">
+	djConfig = {
+		parseOnLoad: true,
+		isDebug: true
+	};
+</script>
+<script type="text/javascript" src="../../../dojo/dojo.js"></script>
+<script language="JavaScript" type="text/javascript">
+	dojo.require("ibm_gauge.widget.BarGraph");
+	dojo.require("dojo.parser");
+	
+	dojo.addOnLoad(init);
+	
+	var bg;
+	var ranges = [ {low:5, high:10, hover:'5 - 10'},
+				   {low:10, high:20, hover:'10 - 20'},
+				   {low:20, high:30, hover:'20 - 30'} 
+				 ];
+	var tickMarks = [5,10,15,20,25,30];
+	
+	function init() {
+		bg = dojo.byId("testBarGraph");
+		bg = new ibm_gauge.widget.BarGraph({
+			id: "testBarGraph",
+			gaugeHeight: 55,
+			dataY: 25,
+			dataHeight: 25,
+			dataWidth: 225,
+			useRangeStyles: 8 
+		}, bg);
+		bg.startup();
+
+		var fill = new Object();
+		fill.type = "linear";
+		fill.x1 = 0;
+		fill.x2 = 0;
+		fill.y2 = 0;
+		fill.y1 = bg.gaugeHeight;
+		fill.colors = [{offset: 0, color: "#ECECEC"}, {offset: 1, color: "white"}];
+		bg.gaugeBackground = fill;
+		for(var i=0; i<ranges.length; i++){
+			bg.addRange(ranges[i]);
+		}
+		for(var i=0; i<tickMarks.length; i++){
+			bg.addIndicator({ value:tickMarks[i], 
+				 			  type:'line', 
+							  length:5, 
+							  offset:-5,
+							  width: 1,
+							  label:''+tickMarks[i]});
+		}
+		var targetIndicator = new ibm_gauge.widget.Indicator({
+			value:22, 
+			type:"line", 
+			color:'#D00000', 
+			hover:'Target: 22',
+			title: 'Target'
+		});
+		var valueIndicator = new ibm_gauge.widget.Indicator({
+			value:17, 
+			type:"bar", 
+			width: 7,
+			hover:'Value: 17',
+			title: 'Value'
+		});
+		bg.addIndicator(targetIndicator);
+		bg.addIndicator(valueIndicator);
+	}
+	
+</script>
+</head>
+<body class="tundra">
+<h2>IBM Bar Graph Widget</h2>
+<br>
+<br>
+<div id="testBarGraph"></div>
+</body>
+</html>

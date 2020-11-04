@@ -39,6 +39,7 @@ import org.pwte.example.exception.InvalidQuantityException;
 import org.pwte.example.exception.OrderModifiedException;
 import org.pwte.example.exception.ProductDoesNotExistException;
 import org.pwte.example.service.CustomerOrderServices;
+import org.pwte.example.service.CustomerOrderServicesImpl;
 
 import com.ibm.json.java.JSONArray;
 import com.ibm.json.java.JSONObject;
@@ -47,7 +48,9 @@ import com.ibm.json.java.JSONObject;
 //@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CustomerOrderResource {
 	//CustomerOrderServices customerOrderServices = null;
-	@Inject CustomerOrderServices customerOrderServices;
+	@Inject 
+	CustomerOrderServices customerOrderServices;
+	//CustomerOrderServices customerOrderServices = new CustomerOrderServicesImpl();
 	/*
 	public CustomerOrderResource() 
 	{

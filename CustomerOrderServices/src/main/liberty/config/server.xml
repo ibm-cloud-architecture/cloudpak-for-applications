@@ -1,19 +1,27 @@
 <server>
   <featureManager>
       <feature>cdi-2.0</feature>
-      <feature>appSecurity-2.0</feature>
-      <feature>localConnector-1.0</feature>
-      <feature>jaxrs-1.1</feature>
-      <feature>jdbc-4.1</feature>
-      <feature>jpa-2.0</feature>
-      <feature>jsp-2.3</feature>
-      <feature>servlet-3.1</feature>
-      <feature>monitor-1.0</feature>
+      <feature>jaxrs-2.1</feature>
+      <feature>jsonp-1.1</feature>
+      <feature>jpaContainer-2.2</feature>
+      <feature>bells-1.0</feature>
   </featureManager>
 
   <library id="DB2Lib">
-    <fileset dir="/opt/ibm/wlp/usr/shared/resources/db2" includes="db2jcc4.jar db2jcc_license_cu.jar"/>
+    <!--<fileset dir="${server.config.dir}/resources/db2/" includes="db2jcc4.jar db2jcc_license_cu.jar"/> -->
+    <fileset dir="${server.config.dir}/resources/db2/" iincludes="*.jar"/> 
   </library>
+
+  
+  <library id="hibernate">
+    <fileset dir="${server.config.dir}/resources/hibernate/" includes="*.jar"/>
+    <file name="${server.config.dir}/resources/hibernate/log4j.properties"/>
+ </library>
+
+ <fileset dir="${server.config.dir}/hibernate/" includes="*.jar"/>
+
+ <bell libraryRef="hibernate"/>
+ 
 
   <dataSource id="OrderDS" jndiName="jdbc/orderds" type="javax.sql.XADataSource">
     <jdbcDriver libraryRef="DB2Lib"/>
@@ -35,10 +43,8 @@
      </group>
   </basicRegistry>
 
-  <applicationMonitor updateTrigger="mbean"/>
-
-  <application id="customerOrderServicesApp" name="CustomerOrderServicesApp-0.1.0-SNAPSHOT.ear" type="ear" location="CustomerOrderServicesApp-0.1.0-SNAPSHOT.ear">
-    <classloader apiTypeVisibility="spec, ibm-api, third-party" />
-  </application>
+  <webApplication location="customer-order-services.war" contextRoot="/">
+    <classloader commonLibraryRef="hibernate"/>
+   </webApplication> 
 
 </server>
