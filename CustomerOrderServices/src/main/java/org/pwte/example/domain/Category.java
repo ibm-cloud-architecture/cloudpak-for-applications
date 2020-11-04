@@ -57,22 +57,22 @@ public class Category implements Serializable {
 		this.name = name;
 	}
 	
-	//trying workaround for JAX-B circular reference problem
-	/*
+	
+	
 	@JsonbTransient
 	public Category getParent() {
 		return parent;
 	}
-	@JsonbTransient
+	
 	public void setParent(Category parent) {
 		this.parent = parent;
 	}
 	
-	@JsonbTransient
+	
 	public Collection<Category> getSubCategories() {
 		return subCategories;
 	}
-	@JsonbTransient
+	
 	public void setSubCategories(Collection<Category> subCategories) {
 		this.subCategories = subCategories;
 	}
@@ -81,11 +81,11 @@ public class Category implements Serializable {
 	public Collection<Product> getProducts() {
 		return products;
 	}
-	@JsonbTransient
+
 	public void setProducts(Collection<Product> products) {
 		this.products = products;
 	}
-	*/
+	
 	
 
 }

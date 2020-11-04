@@ -44,21 +44,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		query.setParameter(1, categoryId);
 		query.setParameter(2, categoryId);
 
-		//debug-start
-		System.out.println("Query: "+query);
-		List<Product> res = query.getResultList();
-		System.out.println("Result: "+res);
-		for(int i = 0; i < res.size(); i++) {
-			Product p = res.get(i);
-			System.out.println(p.getName());
-			Collection<Category> c = p.getCategories();
-			if (c == null) 
-				System.out.println("categiries = null");
-			else	
-			     System.out.println(java.util.Arrays.toString(c.toArray()));
-        }
-		//debug-end
-
 		return query.getResultList();
 	}
 

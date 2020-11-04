@@ -3,6 +3,7 @@
       <feature>cdi-2.0</feature>
       <feature>jaxrs-2.1</feature>
       <feature>jsonp-1.1</feature>
+      <feature>jsonb-1.0</feature>
       <feature>jpaContainer-2.2</feature>
       <feature>bells-1.0</feature>
   </featureManager>
@@ -15,7 +16,6 @@
   
   <library id="hibernate">
     <fileset dir="${server.config.dir}/resources/hibernate/" includes="*.jar"/>
-    <file name="${server.config.dir}/resources/hibernate/log4j.properties"/>
  </library>
 
  <fileset dir="${server.config.dir}/hibernate/" includes="*.jar"/>
@@ -43,7 +43,7 @@
      </group>
   </basicRegistry>
 
-  <webApplication location="customer-order-services.war" contextRoot="/">
+  <webApplication location="customer-order-services.war" contextRoot="CustomerOrderServicesWeb">
     <classloader commonLibraryRef="hibernate"/>
    </webApplication> 
 
