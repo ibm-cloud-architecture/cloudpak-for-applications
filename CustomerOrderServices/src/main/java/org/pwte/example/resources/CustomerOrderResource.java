@@ -41,8 +41,8 @@ import org.pwte.example.exception.ProductDoesNotExistException;
 import org.pwte.example.service.CustomerOrderServices;
 import org.pwte.example.service.CustomerOrderServicesImpl;
 
-import com.ibm.json.java.JSONArray;
-import com.ibm.json.java.JSONObject;
+//import com.ibm.json.java.JSONArray;
+//import com.ibm.json.java.JSONObject;
 
 @Path("/Customer")
 //@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -237,6 +237,7 @@ public class CustomerOrderResource {
 		try
 		{
 			AbstractCustomer customer = customerOrderServices.loadCustomer();
+			/*
 			JSONObject data = new JSONObject();
 			JSONArray groups = new JSONArray();
 			
@@ -295,7 +296,9 @@ public class CustomerOrderResource {
 				
 			}
 			data.put("formData",groups);
-			return Response.ok(data).build();
+			*/
+			//return Response.ok(data).build();
+			return Response.ok(customer).build();
 		}
 		catch (CustomerDoesNotExistException e) {
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
