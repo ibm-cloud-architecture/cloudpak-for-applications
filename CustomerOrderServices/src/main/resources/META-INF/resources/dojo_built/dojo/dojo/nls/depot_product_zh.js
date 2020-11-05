@@ -1,0 +1,1 @@
+dojo.provide("dojo.nls.depot_product_zh");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.zh");dijit.nls.common.zh={"buttonOk":"确定","buttonCancel":"取消","buttonSave":"保存","itemClose":"关闭"};

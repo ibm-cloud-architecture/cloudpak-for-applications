@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>IBM Bar Graph Widget</title>
+<style>
+	@import "_Gauge.css";
+	@import "../../../dojo/resources/dojo.css";
+	@import "../../../dijit/themes/tundra/tundra.css";
+</style>
+<script type="text/javascript">
+	djConfig = {
+		parseOnLoad: true,
+		isDebug: true
+	};
+</script>
+<script type="text/javascript" src="../../../dojo/dojo.js"></script>
+<script language="JavaScript" type="text/javascript">
+	dojo.require("ibm_gauge.widget.BarGraph");
+	dojo.require("dojo.parser");
+	
+	dojo.addOnLoad(init);
+	
+	var bg;						   
+	
+	function init() {
+		bg = dijit.byId("testBarGraph");
+		console.debug(bg);
+	}
+</script>
+</head>
+<body class="tundra">
+<h2>IBM Bar Graph Widget Declarative</h2>
+<br>
+<br>
+<div	dojoType="ibm_gauge.widget.BarGraph"
+		id="testBarGraph"
+		gaugeHeight=55
+		dataY="25"
+		dataHeight="25"
+		dataWidth="225"
+		useRangeStyles="8">
+	<div	dojoType="ibm_gauge.widget.Gradient"
+			id="gradient"
+			type="linear"
+			x1=0
+			x2=0
+			y1=0>
+		<div	dojoType="ibm_gauge.widget.GradientColor"
+				id="gradientColor0"
+				offset=0
+				color="#ECECEC">
+		</div>
+		<div	dojoType="ibm_gauge.widget.GradientColor"
+				id="gradientColor1"
+				offset=1
+				color="white">
+		</div>
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range0"
+			low=5
+			high=10
+			hover="5 - 10">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range1"
+			low=10
+			high=20
+			hover="10 - 20">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range2"
+			low=20
+			high=30
+			hover="20 - 30">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range3"
+			low=30
+			high=40
+			hover="30 - 40">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range4"
+			low=40
+			high=50
+			hover="40 - 50">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range5"
+			low=50
+			high=60
+			hover="50 - 60">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range6"
+			low=60
+			high=70
+			hover="60 - 70">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Range"
+			id="range7"
+			low=70
+			high=75
+			hover="70 - 75">
+	</div>
+	<div	dojoType="ibm_gauge.widget.Indicator"
+			id="target"
+			value=22
+			type="line"
+			color="#D00000"
+			title="Target"
+			hover="Target: 22">
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			id="value"
+			value=17
+			type="bar"
+			width=7
+			title="Value"
+			hover="Value: 17">
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=5
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=5>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=10
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=10>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=15
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=15>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=20
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=20>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=25
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=25>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=30
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=30>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=35
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=35>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=40
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=40>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=45
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=45>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=50
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=50>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=55
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=55>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=60
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=60>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=65
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=65>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=70
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=70>
+	</div>
+	<div 	dojoType="ibm_gauge.widget.Indicator"
+			value=75
+			type="line"
+			length=5
+			offset=-5
+			width=1
+			label=75>
+	</div>
+</div>
+</body>
+</html>

@@ -1,1 +1,0 @@
-dojo.provide("dojo.nls.depot_product_tr");dojo.provide("dijit.nls.common");dijit.nls.common._built=true;dojo.provide("dijit.nls.common.tr");dijit.nls.common.tr={"buttonOk":"Tamam","buttonCancel":"İptal","buttonSave":"Kaydet","itemClose":"Kapat"};
