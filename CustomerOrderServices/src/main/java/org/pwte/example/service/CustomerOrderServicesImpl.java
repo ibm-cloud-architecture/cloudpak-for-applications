@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 //import javax.annotation.security.RolesAllowed;
