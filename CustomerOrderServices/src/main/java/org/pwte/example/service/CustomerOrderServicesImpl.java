@@ -37,7 +37,9 @@ import org.pwte.example.exception.ProductDoesNotExistException;
 @RequestScoped
 public class CustomerOrderServicesImpl implements CustomerOrderServices {
 
-	@PersistenceContext (name = "CustomerOrderServices")
+	//@PersistenceContext (name = "CustomerOrderServices")
+	//using default persistence context in Quarkus
+	@Inject
 	protected EntityManager em;
 	
 	//@Resource SessionContext ctx;

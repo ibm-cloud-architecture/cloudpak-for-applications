@@ -20,7 +20,9 @@ import org.pwte.example.exception.ProductDoesNotExistException;
 @RequestScoped
 public class ProductSearchServiceImpl implements ProductSearchService {
 
-	@PersistenceContext (name = "CustomerOrderServices")
+	//@PersistenceContext (name = "CustomerOrderServices")
+	//using default persistence context in Quarkus
+	@Inject
 	protected EntityManager em;
 	
 	public Category loadCategory(int categoryId)throws CategoryDoesNotExist {
