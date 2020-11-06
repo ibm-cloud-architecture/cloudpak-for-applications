@@ -1,4 +1,13 @@
-Setup on Mac:  
+
+ ## Traditional WebSphere application modernized for Quarkus 
+
+
+### Start application DB2 database in a pre-built container
+```
+docker run -itd --name db2-cos --privileged=true -p 50000:50000 -e LICENSE=accept -e DB2INST1_PASSWORD=db2inst1 -e DBNAME=orderdb vandepol/db2-cos
+```
+
+### Quarkus setup on Mac
 https://quarkus.io/guides/building-native-image
 
 List installed JDKs  
@@ -21,16 +30,19 @@ export JAVA_HOME=${GRAALVM_HOME}
 export PATH=${GRAALVM_HOME}/bin:$PATH
 ```
 
-Build quarkus in JVM:
+### Build and run application in Quarkus in JVM mode
 ```
 ./mvnw compile quarkus:dev
 ```  
+Access the App
+http://localhost:8080/
 
-Build and run native executable
+### Build and run application in native executable mode
 ```
 ./mvnw package -Pnative
 target/customer-order-services-quarkus-1.0-SNAPSHOT-runner
 ```
+
 
 Access the App
 http://localhost:8080/
