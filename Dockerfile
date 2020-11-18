@@ -1,6 +1,7 @@
 FROM ibmcom/websphere-liberty:kernel-ubi-min
 USER root
 COPY ./liberty/server.xml /config
+COPY ./liberty/server.env /config
 COPY ./liberty/jvm.options /config
 
 ARG SSL=false

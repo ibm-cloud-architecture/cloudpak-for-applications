@@ -312,6 +312,7 @@ The `Dockerfile` for the Customer Order Services application is shown below. The
 FROM ibmcom/websphere-liberty:kernel-ubi-min
 
 COPY --chown=1001:0 ./liberty/server.xml /config
+COPY --chown=1001:0 ./liberty/server.env /config
 COPY --chown=1001:0 ./liberty/jvm.options /config
 
 ARG SSL=false
@@ -332,7 +333,13 @@ The first two `COPY` commands copy the `server.xml` and `jvm.options` files to 
 ## Run the application locally
 Now that the application code changes have been made, the WebSphere Liberty configuration has been created and the Dockerfile is ready, the next step is to build a Docker image and run an instance locally to validate that the application runs correctly.
 
-1. Clone the GitHub repo and switch to the `liberty` branch using the following steps:
+1. The app requires a DB2 database. You can run it in a pre-built container:
+ 
+ ```
+ docker run -itd --name db2-cos --privileged=true -p 50000:50000 -e LICENSE=accept -e DB2INST1_PASSWORD=db2inst1 -e DBNAME=orderdb vandepol/db2-cos
+ ```
+
+2. Clone the GitHub repo and switch to the `liberty` branch using the following steps:
 
   ```
   git clone SOME_REPO
@@ -340,7 +347,7 @@ Now that the application code changes have been made, the WebSphere Liberty conf
   git checkout liberty
   ```
 
-2. Use Maven to build the application
+3. Use Maven to build the application
 
   ```
   cd CustomerOrderServicesProject
@@ -349,17 +356,17 @@ Now that the application code changes have been made, the WebSphere Liberty conf
 
   The `CustomerOrderServicesApp-0.1.0-SNAPSHOT.ear` file should now be present in `CustomerOrderServicesApp/target/`
 
-3. Modify the `liberty/server.env` file for your environment as shown below:
+4. Modify the `liberty/server.env` file for your environment as shown below:
 
   ```
-  DB2_HOST=172.16.52.252
+  DB2_HOST=db2-cos
   DB2_PORT=50000
   DB2_DBNAME=ORDERDB
   DB2_USER=db2inst1
   DB2_PASSWORD=db2inst1
   ```
 
-4. Build the Docker image using the following commands:
+5. Build the Docker image using the following commands:
 
   ```
   cd ../cloudpak-for-applications
@@ -398,15 +405,23 @@ Now that the application code changes have been made, the WebSphere Liberty conf
 
   ```
 
-5. Run the newly created Docker image using the commands below:
+6. Run the newly created Docker image using the commands below:
 
   ```
-  docker run --name customerorderservices-local -d -p 9081:9081 -p 9443:9443 -v server.env:/config/server.env customerorderservices-local:1.0
+  docker run --name customerorderservices-local -d -p 9081:9081 -p 9443:9443 customerorderservices-local:1.0
   ```
 
   This command injects the server.env file in the correct location so that it is loaded by WebSphere Liberty on startup.
 
-6. Check the logs for the WebSphere Liberty server using:
+7. In order to allow the application container to the database container, everything needs to run in one network.
+
+ ```
+ docker network create myNetwork
+ docker network connect myNetwork db2-cos
+ docker network connect myNetwork customerorderservices-local
+ ```
+
+8. Check the logs for the WebSphere Liberty server using:
 
   ```
   docker logs customerorderservices-local
@@ -437,15 +452,15 @@ Now that the application code changes have been made, the WebSphere Liberty conf
   [AUDIT   ] CWWKF0011I: The defaultServer server is ready to run a smarter planet. The defaultServer server started in 12.838 seconds.
   ```
 
-7. Access the application in a browser using `https://127.0.0.1:9443/CustomerOrderServicesWeb`. Login using `rbarcia` and `bl0wfish` and then add an item to the shopping cart
+9. Access the application in a browser using `https://127.0.0.1:9443/CustomerOrderServicesWeb`. Login using `rbarcia` and `bl0wfish` and then add an item to the shopping cart
 
   ![App](images/liberty-build/app.jpg)
 
-8. Validate that the `/metrics` endpoint is available at `http://127.0.0.1:9081/metrics`
+10. Validate that the `/metrics` endpoint is available at `http://127.0.0.1:9081/metrics`
 
   ![Metrics](images/liberty-build/metrics.jpg)
 
-9. Stop the Docker container using the commands below:
+11. Stop the Docker container using the commands below:
 
   ```
   docker stop customerorderservices-local
