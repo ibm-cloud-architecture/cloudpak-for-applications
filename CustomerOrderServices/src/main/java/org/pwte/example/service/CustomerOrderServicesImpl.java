@@ -17,6 +17,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import javax.transaction.Transactional;
+
 import org.pwte.example.domain.AbstractCustomer;
 import org.pwte.example.domain.Address;
 import org.pwte.example.domain.BusinessCustomer;
@@ -45,7 +47,8 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 	protected EntityManager em;
 	
 	//@Resource SessionContext ctx;
-	
+
+	@Transactional
 	public Order addLineItem(LineItem newLineItem)
 			throws CustomerDoesNotExistException, OrderNotOpenException,
 			ProductDoesNotExistException,GeneralPersistenceException, InvalidQuantityException, OrderModifiedException {
@@ -100,6 +103,7 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 		return existingOpenOrder;
 	}
 
+	@Transactional
 	public Order openOrder()
 			throws CustomerDoesNotExistException, OrderAlreadyOpenException ,GeneralPersistenceException{
 		AbstractCustomer customer = loadCustomer();
@@ -112,15 +116,15 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 		Order newOrder = new Order();
 		newOrder.setCustomer(customer);
 		newOrder.setStatus(Order.Status.OPEN);
-		System.out.println(newOrder.getStatus());
 		newOrder.setTotal(new BigDecimal(0));
-		
+
 		em.persist(newOrder);
 		
 		customer.setOpenOrder(newOrder);
 		return newOrder;
 	}
 
+	@Transactional
 	public void submit(long version) throws CustomerDoesNotExistException,
 			OrderNotOpenException, NoLineItemsException,GeneralPersistenceException, OrderModifiedException {
 		AbstractCustomer customer = loadCustomer();
@@ -150,6 +154,7 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 
 	
 
+	@Transactional
 	public Order removeLineItem(int productId,long version) throws CustomerDoesNotExistException, OrderNotOpenException, ProductDoesNotExistException, NoLineItemsException, GeneralPersistenceException, OrderModifiedException {
 		Product product = em.find(Product.class,productId);
 		if(product == null) throw new ProductDoesNotExistException();
@@ -233,6 +238,7 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 		return (Date)query.getSingleResult();
 	}
 
+	@Transactional
 	public void updateAddress(Address address)
 			throws CustomerDoesNotExistException, GeneralPersistenceException {
 		AbstractCustomer customer = loadCustomer();
@@ -240,6 +246,7 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 	}
 	
 	
+	@Transactional
 	public void updateInfo(HashMap<String, Object> info)throws GeneralPersistenceException, CustomerDoesNotExistException
 	{
 		AbstractCustomer customer = loadCustomer();
@@ -249,7 +256,8 @@ public class CustomerOrderServicesImpl implements CustomerOrderServices {
 		}
 		else
 		{
-			((ResidentialCustomer)customer).setHouseholdSize(((Integer)info.get("householdSize")).shortValue());
+			short householdSize = ((BigDecimal) info.get("householdSize")).shortValueExact();
+			((ResidentialCustomer)customer).setHouseholdSize(householdSize);
 		}
 	}
 

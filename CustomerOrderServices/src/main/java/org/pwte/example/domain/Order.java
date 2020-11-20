@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 
 //import org.codehaus.jackson.annotate.JsonIgnore;
 import javax.json.bind.annotation.JsonbProperty;
@@ -34,6 +36,7 @@ public class Order implements Serializable {
 	protected int orderId;
 	protected BigDecimal total;
 	public static enum Status { OPEN, SUBMITTED, SHIPPED, CLOSED }
+	@Enumerated(EnumType.STRING)
 	protected Status status;
 	
 	@Column(name="SUBMIT_TIME")
