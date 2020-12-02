@@ -55,7 +55,7 @@ cd CustomerOrderServices
 ./mvnw compile quarkus:dev
 ```  
 Access the App
-http://localhost:8080/
+http://localhost:8080/CustomerOrderServicesWeb/index.html
 
 ### Build and run application in native executable mode
 ```
@@ -65,7 +65,7 @@ target/customer-order-services-quarkus-1.0-SNAPSHOT-runner
 ```
 
 Access the App
-http://localhost:8080/
+http://localhost:8080/CustomerOrderServicesWeb/index.html
 
 
 ![memory](images/app.jpg "App")

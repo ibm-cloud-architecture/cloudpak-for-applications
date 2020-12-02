@@ -11,8 +11,8 @@ import javax.inject.Inject;
 //import javax.ejb.TransactionAttribute;
 //import javax.ejb.TransactionAttributeType;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+//import javax.naming.InitialContext;
+//import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,7 +39,7 @@ import org.pwte.example.exception.InvalidQuantityException;
 import org.pwte.example.exception.OrderModifiedException;
 import org.pwte.example.exception.ProductDoesNotExistException;
 import org.pwte.example.service.CustomerOrderServices;
-import org.pwte.example.service.CustomerOrderServicesImpl;
+
 
 import com.ibm.json.java.JSONObject;
 import com.ibm.json.java.JSONArray;
